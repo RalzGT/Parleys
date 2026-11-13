@@ -29,6 +29,7 @@ input[type=text],input[type=password]{font:inherit;font-size:16px;padding:10px 1
 .btn.o{background:transparent;color:var(--tx);border-color:var(--bd)}
 .btn.s{padding:6px 10px;font-size:13px}
 .err{color:var(--r);font-size:13px;margin:8px 0 0}
+.rb{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .who{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0}
 .tabs,.ch{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
 .tb,.ch button{flex:none;padding:8px 14px;border:1px solid var(--bd);border-radius:999px;background:var(--gl);color:var(--tx);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
@@ -77,14 +78,22 @@ footer p{margin:0 0 8px}
 <div id="conf" class="card" hidden></div>
 <section id="login" class="card" hidden>
 <h2>Entrar</h2>
-<p class="mu">Escribe tu nombre y un PIN de 4 dígitos. Si es tu primera vez, se crea tu usuario. Usa siempre el mismo nombre y PIN. La primera persona que se registra es quien carga los resultados.</p>
-<label>Nombre<input id="ln" type="text" maxlength="20" autocomplete="off" autocapitalize="words"></label>
-<label>PIN (4 dígitos)<input id="lp" type="password" inputmode="numeric" maxlength="4" autocomplete="off"></label>
-<button type="button" class="btn" id="le">Entrar</button>
+<p class="mu">Usa tu cuenta del Panel: es la misma para todo. Si todavía no tienes una, créala aquí y también te sirve para el Panel.</p>
+<label>Tu nombre (solo para crear la cuenta)<input id="ln" type="text" maxlength="20" autocomplete="given-name"></label>
+<label>Correo<input id="le" type="text" inputmode="email" autocapitalize="off" autocomplete="email"></label>
+<label>Contraseña (mínimo 6)<input id="lp" type="password" autocomplete="current-password"></label>
+<div class="rb"><button type="button" class="btn" id="lin">Entrar</button><button type="button" class="btn o" id="lcr">Crear cuenta</button></div>
 <p class="err" id="lerr"></p>
 </section>
+<section id="nom" class="card" hidden>
+<h2>¿Cómo te llamas?</h2>
+<p class="mu">Solo se pone una vez. Así te verán tus amigos en el ranking de la quiniela.</p>
+<label>Nombre<input id="nn" type="text" maxlength="20" autocomplete="given-name"></label>
+<div class="rb"><button type="button" class="btn" id="nns">Guardar nombre</button></div>
+<p class="err" id="nerr"></p>
+</section>
 <section id="app" hidden>
-<div class="who"><span>Hola, <b id="yo"></b></span><span><button type="button" class="btn o s" id="rf">↻ Actualizar</button> <button type="button" class="btn o s" id="sl">Salir</button></span></div>
+<div class="who"><span>Hola, <b id="yo"></b></span><span><button type="button" class="btn o s" id="rf">↻ Actualizar</button></span></div>
 <div class="tabs" id="tabs"></div>
 <p class="err" id="gerr"></p>
 <div id="vista"></div>
@@ -92,13 +101,14 @@ footer p{margin:0 0 8px}
 </main>
 <footer class="w">
 <p class="mu"><b>Cómo se puntúa:</b> eliges quién gana (o empate) antes de que empiece el partido. Si aciertas, ganas la cuota justa de tu pick en puntos, es decir, 100 dividido entre su probabilidad: acertar un favorito de 60% da 1.7 puntos y un 25% da 4. Acertar lo difícil vale más. Los picks de los demás se ven cuando el partido empieza.</p>
-<p class="mu">El PIN solo evita que alguien use tu nombre por error; no es seguridad real. Es un juego entre amigos.</p>
+<p class="mu">Entras con la misma cuenta del Panel. Para salir de tu cuenta, hazlo desde el <a href="index.html" style="color:var(--ac);font-weight:700">Panel</a>.</p>
 </footer>
 <div id="ts" role="status"></div>
 <script src="config.js"></script>
+<script src="auth.js"></script>
 <script src="data.js"></script>
 <script>
-const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const TZ="America/Tegucigalpa";
@@ -110,22 +120,11 @@ const pts=p=>Math.max(1,Math.round(100/p*10)/10);
 const fmt=n=>String(Math.round(n*10)/10);
 const EMOJI={f:"⚽",b:"⚾",k:"🏀"};
 
-let me=LS.get("qn-me",null),jugadores=[],picks=[],resu={},idx={},tab=LS.get("qn-tab","partidos"),dep="all",gerr="";
+const SES=()=>Cuenta.ses,miId=()=>SES().user.id;
+let jugadores=[],picks=[],resu={},idx={},soyAdmin=false,tab=LS.get("qn-tab","partidos"),dep="all",gerr="";
 let tmT;
 function toast(m){const e=$("ts");e.textContent=m;e.classList.add("on");clearTimeout(tmT);tmT=setTimeout(()=>e.classList.remove("on"),2200)}
-
-/* ---------- Base de datos (Supabase, solo con fetch) ---------- */
-async function api(ruta,opt){
-  opt=opt||{};
-  const r=await fetch(SUPABASE_URL+"/rest/v1/"+ruta,{method:opt.method||"GET",headers:Object.assign({apikey:SUPABASE_KEY,"Content-Type":"application/json"},opt.headers||{}),body:opt.body});
-  const t=await r.text();
-  if(!r.ok)throw new Error(r.status+" "+t.slice(0,160));
-  return t?JSON.parse(t):null;
-}
-async function hash(s){
-  try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
-  catch(e){let h=5381;for(const c of s)h=(h*33+c.charCodeAt(0))>>>0;return"h"+h.toString(16)}
-}
+const nombreDe=id=>{const j=jugadores.find(x=>x.user_id===id);return j?j.nombre:"Jugador"};
 
 /* ---------- Partidos (los mismos de la Mesa de parley) ---------- */
 function fechaDe(r){const y=SNAP.getUTCFullYear();let d=new Date(y+"-"+r[1]+":00Z");if(d-SNAP<-1.5e10)d=new Date((y+1)+"-"+r[1]+":00Z");return d}
@@ -138,67 +137,68 @@ function delData(){
   return out.sort((a,b)=>a.d-b.d);
 }
 const partidoDePick=p=>({id:p.partido,dep:p.deporte,lg:p.liga,h:p.eq_local,a:p.eq_visita,d:new Date(p.kickoff)});
-const etiqueta=(p)=>p.pick==="L"?p.eq_local:p.pick==="V"?p.eq_visita:"Empate";
-function reindex(){idx={};for(const p of picks){(idx[p.partido]||(idx[p.partido]={}))[p.jugador]=p}}
-function setPick(f){const i=picks.findIndex(p=>p.jugador===f.jugador&&p.partido===f.partido);if(i>=0)picks[i]=f;else picks.push(f);reindex()}
-function quitaPick(f){picks=picks.filter(p=>!(p.jugador===f.jugador&&p.partido===f.partido));reindex()}
-const admin=()=>jugadores.length?jugadores[0].nombre:"";
-const esAdmin=()=>!!me&&me.nombre.toLowerCase()===admin().toLowerCase();
+const etiqueta=p=>p.pick==="L"?p.eq_local:p.pick==="V"?p.eq_visita:"Empate";
+function reindex(){idx={};for(const p of picks){(idx[p.partido]||(idx[p.partido]={}))[p.user_id]=p}}
+function setPick(f){const i=picks.findIndex(p=>p.user_id===f.user_id&&p.partido===f.partido);if(i>=0)picks[i]=f;else picks.push(f);reindex()}
+function quitaPick(f){picks=picks.filter(p=>!(p.user_id===f.user_id&&p.partido===f.partido));reindex()}
 
 /* ---------- Carga ---------- */
 async function cargar(){
+  const s=SES();if(!s||!s.nombre)return;
   try{
-    const [j,p,r]=await Promise.all([api("jugadores?select=nombre,creado&order=creado.asc"),api("picks?select=*&order=kickoff.desc&limit=2000"),api("resultados?select=*")]);
-    jugadores=j||[];picks=p||[];resu={};(r||[]).forEach(x=>{resu[x.partido]=x});reindex();gerr="";
-  }catch(e){gerr="No pude conectar con la base de datos ("+e.message+"). Revisa config.js y que tu proyecto de Supabase no esté pausado."}
+    const [pf,p,r,ad]=await Promise.all([
+      Cuenta.rest("perfiles?select=user_id,nombre,creado&order=creado.asc"),
+      Cuenta.rest("q_picks?select=*&order=kickoff.desc&limit=2000"),
+      Cuenta.rest("q_resultados?select=*"),
+      Cuenta.rest("admins?select=user_id&user_id=eq."+encodeURIComponent(s.user.id))]);
+    jugadores=pf||[];picks=p||[];resu={};(r||[]).forEach(x=>{resu[x.partido]=x});soyAdmin=!!(ad&&ad.length);reindex();gerr="";
+  }catch(e){gerr="No pude conectar con la base de datos ("+e.message+"). Revisa que ya corriste el SQL de la quiniela en Supabase y que tu proyecto no esté pausado."}
   render();
 }
 
 /* ---------- Acciones ---------- */
-async function entrar(){
-  const nombre=$("ln").value.trim().replace(/\s+/g," "),pin=$("lp").value.trim(),er=$("lerr");er.textContent="";
-  if(!/^[\p{L}\p{N} -]{2,20}$/u.test(nombre)){er.textContent="El nombre debe tener entre 2 y 20 letras o números.";return}
-  if(!/^\d{4}$/.test(pin)){er.textContent="El PIN son 4 números.";return}
-  $("le").disabled=true;
+async function entrar(nuevo){
+  const nom=$("ln").value.trim().replace(/\s+/g," "),em=$("le").value.trim().toLowerCase(),pw=$("lp").value,er=$("lerr");er.textContent="";
+  if(nuevo&&nom.length<2){er.textContent="Escribe tu nombre (mínimo 2 letras) para crear la cuenta.";return}
+  if(!/^\S+@\S+\.\S+$/.test(em)){er.textContent="Escribe un correo válido.";return}
+  if(pw.length<6){er.textContent="La contraseña debe tener al menos 6 caracteres.";return}
+  $("lin").disabled=$("lcr").disabled=true;
   try{
-    const h=await hash(nombre.toLowerCase()+":"+pin);
-    const ex=await api("jugadores?select=nombre,pin&nombre=ilike."+encodeURIComponent(nombre));
-    let real=nombre;
-    if(ex&&ex.length){
-      if(ex[0].pin!==h){er.textContent="Ese nombre ya existe y el PIN no coincide.";return}
-      real=ex[0].nombre;
-    }else{
-      await api("jugadores",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify([{nombre,pin:h}])});
-    }
-    me={nombre:real};LS.set("qn-me",me);await cargar();
-  }catch(e){er.textContent="No pude entrar: "+e.message.slice(0,120)}
-  finally{$("le").disabled=false}
+    if(nuevo){if(await Cuenta.crear(em,pw,nom)==="confirmar"){er.textContent="Cuenta creada. Revisa tu correo para confirmarla y luego pulsa «Entrar».";return}}
+    else await Cuenta.entrar(em,pw);
+  }catch(e){er.textContent=Cuenta.msgErr(e)}
+  finally{$("lin").disabled=$("lcr").disabled=false}
+}
+async function guardaNombre(){
+  const er=$("nerr");er.textContent="";
+  try{await Cuenta.ponNombre($("nn").value)}
+  catch(e){er.textContent=String(e.message).startsWith("Escribe")?e.message:"No pude guardar tu nombre ("+String(e.message).slice(0,80)+")"}
 }
 async function elegir(m,k){
   if(m.d.getTime()<=Date.now())return toast("Ese partido ya empezó");
   const op=m.ops.find(o=>o.k===k);if(!op)return;
-  const fila={jugador:me.nombre,partido:m.id,deporte:m.dep,liga:m.lg,eq_local:m.h,eq_visita:m.a,kickoff:m.d.toISOString(),pick:k,prob:op.p};
-  const prev=(idx[m.id]||{})[me.nombre];
+  const fila={user_id:miId(),partido:m.id,deporte:m.dep,liga:m.lg,eq_local:m.h,eq_visita:m.a,kickoff:m.d.toISOString(),pick:k,prob:op.p};
+  const prev=(idx[m.id]||{})[miId()];
   setPick(fila);render();
   try{
-    await api("picks?on_conflict=jugador,partido",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify([fila])});
+    await Cuenta.rest("q_picks?on_conflict=user_id,partido",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify([fila])});
     toast("Guardado ✓");
   }catch(e){
     if(prev)setPick(prev);else quitaPick(fila);
-    render();toast("No se guardó: "+e.message.slice(0,70));
+    render();toast("No se guardó: "+String(e.message).slice(0,70));
   }
 }
 async function guardaRes(id,k,marcador){
-  const fila={partido:id,res:k,marcador:marcador||null,cargado_por:me.nombre};
+  const fila={partido:id,res:k,marcador:marcador||null};
   try{
-    await api("resultados?on_conflict=partido",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify([fila])});
+    await Cuenta.rest("q_resultados?on_conflict=partido",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify([fila])});
     resu[id]=fila;render();toast("Resultado guardado ✓");
-  }catch(e){toast("No se guardó: "+e.message.slice(0,70))}
+  }catch(e){toast("No se guardó: "+String(e.message).slice(0,70))}
 }
 
 /* ---------- Vistas ---------- */
 function cardPartido(m){
-  const ya=m.d.getTime()<=Date.now(),mio=(idx[m.id]||{})[me.nombre];
+  const ya=m.d.getTime()<=Date.now(),mio=(idx[m.id]||{})[miId()];
   const ops=m.ops.map(o=>{
     const nm=o.k==="L"?m.h:o.k==="V"?m.a:"Empate",on=mio&&mio.pick===o.k;
     return `<button type="button" class="op${on?" on":""}" data-m="${esc(m.id)}" data-k="${o.k}"${ya?" disabled":""}><span class="a">${esc(nm)}</span><span class="b">${fmt(o.p)}% · ${fmt(pts(o.p))} pts</span></button>`;
@@ -206,7 +206,7 @@ function cardPartido(m){
   let pie="";
   if(ya){
     const otros=Object.values(idx[m.id]||{});
-    pie=`<p class="cl">Cerrado. ${otros.length?"Picks: "+otros.map(p=>esc(p.jugador)+" → "+esc(etiqueta(p))).join(" · "):"Nadie hizo pick."}</p>`;
+    pie=`<p class="cl">Cerrado. ${otros.length?"Picks: "+otros.map(p=>esc(nombreDe(p.user_id))+" → "+esc(etiqueta(p))).join(" · "):"Nadie hizo pick."}</p>`;
   }else if(!mio){pie=`<p class="cl">Aún no eliges.</p>`}
   return `<article class="m"><div class="mh"><span>${EMOJI[m.dep]||""} ${esc(m.lg)}</span><span>${fHora.format(m.d)}</span></div><div class="nm">${esc(m.h)}<i>vs</i>${esc(m.a)}</div><div class="ops">${ops}</div>${pie}</article>`;
 }
@@ -227,11 +227,11 @@ function vistaPartidos(){
 }
 function tabla(){
   const T={};
-  const get=n=>T[n]||(T[n]={n,pts:0,ok:0,jug:0,pend:0});
-  jugadores.forEach(j=>get(j.nombre));
+  const get=id=>T[id]||(T[id]={id,n:nombreDe(id),pts:0,ok:0,jug:0,pend:0});
+  jugadores.forEach(j=>get(j.user_id));
   for(const p of picks){
-    const t=get(p.jugador),r=resu[p.partido];
-    if(!r){t.pend++;continue}
+    const t=get(p.user_id),r=resu[p.partido];
+    if(!r){if(p.user_id===miId())t.pend++;continue}
     t.jug++;if(r.res===p.pick){t.ok++;t.pts+=pts(p.prob)}
   }
   return Object.values(T).sort((a,b)=>b.pts-a.pts||b.ok-a.ok||a.n.localeCompare(b.n));
@@ -239,11 +239,11 @@ function tabla(){
 function vistaRanking(){
   const T=tabla(),med=["🥇","🥈","🥉"];
   if(!T.length)return `<div class="card">Todavía no hay jugadores.</div>`;
-  const filas=T.map((t,i)=>`<div class="row${me&&t.n.toLowerCase()===me.nombre.toLowerCase()?" me":""}"><span>${med[i]||i+1}</span><span><b>${esc(t.n)}</b>${t.pend?` <span class="mu">· ${t.pend} pendientes</span>`:""}</span><span class="n">${t.ok}/${t.jug}</span><span class="p">${fmt(t.pts)}</span><span class="n">pts</span></div>`).join("");
+  const filas=T.map((t,i)=>`<div class="row${t.id===miId()?" me":""}"><span>${med[i]||i+1}</span><span><b>${esc(t.n)}</b>${t.pend?` <span class="mu">· ${t.pend} pendientes</span>`:""}</span><span class="n">${t.ok}/${t.jug}</span><span class="p">${fmt(t.pts)}</span><span class="n">pts</span></div>`).join("");
   return `<div class="card"><div class="row h"><span>#</span><span>Jugador</span><span class="n">Aciertos</span><span></span><span></span></div>${filas}</div>`;
 }
 function vistaMis(){
-  const L=picks.filter(p=>p.jugador===me.nombre).sort((a,b)=>new Date(b.kickoff)-new Date(a.kickoff));
+  const L=picks.filter(p=>p.user_id===miId()).sort((a,b)=>new Date(b.kickoff)-new Date(a.kickoff));
   if(!L.length)return `<div class="card">Aún no has hecho picks. Ve a <b>Partidos</b> y elige.</div>`;
   return L.map(p=>{
     const r=resu[p.partido],d=new Date(p.kickoff);
@@ -252,9 +252,8 @@ function vistaMis(){
     return `<article class="m"><div class="mh"><span>${EMOJI[p.deporte]||""} ${esc(p.liga)} · ${esc(cap(fDia.format(d)))}</span>${st}</div><div class="nm">${esc(p.eq_local)}<i>vs</i>${esc(p.eq_visita)}</div><p class="cl">Tu pick: <b>${esc(etiqueta(p))}</b> (${fmt(p.prob)}%)${r&&r.marcador?" · Marcador: "+esc(r.marcador):""}</p></article>`;
   }).join("");
 }
-function selector(id,dep_,actual){
-  const ks=dep_==="f"?["L","E","V"]:["L","V"];
-  const ps=picks.find(p=>p.partido===id);
+function selector(id,actual){
+  const ps=picks.find(p=>p.partido===id),ks=ps.deporte==="f"?["L","E","V"]:["L","V"];
   const nm=k=>k==="L"?ps.eq_local:k==="V"?ps.eq_visita:"Empate";
   return `<div class="rs" data-id="${esc(id)}">`+ks.map(k=>`<button type="button" class="op${actual===k?" on":""}" data-rs="${k}"><span class="a">${esc(nm(k))}</span></button>`).join("")+`<input type="text" class="mc" maxlength="12" placeholder="Marcador (opcional)"></div>`;
 }
@@ -263,15 +262,15 @@ function vistaResultados(){
   for(const p of picks){if(!ver[p.partido])ver[p.partido]=partidoDePick(p)}
   const pend=Object.values(ver).filter(m=>!resu[m.id]&&m.d.getTime()<=ahora).sort((a,b)=>a.d-b.d);
   const hechos=Object.values(ver).filter(m=>resu[m.id]).sort((a,b)=>b.d-a.d).slice(0,15);
-  const ad=esAdmin();
+  const ad=soyAdmin;
   const tarjeta=(m,hecho)=>{
     const r=resu[m.id];
     const cab=`<div class="mh"><span>${EMOJI[m.dep]||""} ${esc(m.lg)} · ${esc(cap(fDia.format(m.d)))}</span><span>${hecho?"Terminado":"Sin resultado"}</span></div><div class="nm">${esc(m.h)}<i>vs</i>${esc(m.a)}</div>`;
-    if(ad)return `<article class="m">${cab}${selector(m.id,m.dep,r&&r.res)}</article>`;
-    const pie=hecho?`<p class="cl">Ganó: <b>${r.res==="L"?esc(m.h):r.res==="V"?esc(m.a):"Empate"}</b>${r.marcador?" · "+esc(r.marcador):""}</p>`:`<p class="cl">Esperando que ${esc(admin())} cargue el resultado.</p>`;
+    if(ad)return `<article class="m">${cab}${selector(m.id,r&&r.res)}</article>`;
+    const pie=hecho?`<p class="cl">Ganó: <b>${r.res==="L"?esc(m.h):r.res==="V"?esc(m.a):"Empate"}</b>${r.marcador?" · "+esc(r.marcador):""}</p>`:`<p class="cl">Esperando que el administrador cargue el resultado.</p>`;
     return `<article class="m">${cab}${pie}</article>`;
   };
-  let h=`<p class="mu" style="margin:6px 2px">${ad?"Tú cargas los resultados. Toca quién ganó cuando termine el partido.":"Los resultados los carga "+esc(admin()||"el primer jugador")+"."}</p>`;
+  let h=`<p class="mu" style="margin:6px 2px">${ad?"Eres el administrador: tú cargas los resultados. Toca quién ganó cuando termine el partido.":"Los resultados los carga el administrador de la quiniela."}</p>`;
   h+=`<h3 class="day">Por cargar</h3>`+(pend.length?pend.map(m=>tarjeta(m,false)).join(""):`<div class="card">No hay partidos pendientes de resultado.</div>`);
   h+=`<h3 class="day">Ya cargados</h3>`+(hechos.length?hechos.map(m=>tarjeta(m,true)).join(""):`<div class="card">Aún no hay resultados.</div>`);
   return h;
@@ -280,14 +279,15 @@ function vistaResultados(){
 /* ---------- Pintar ---------- */
 const TABS=[["partidos","Partidos"],["ranking","Ranking"],["mis","Mis picks"],["resultados","Resultados"]];
 function render(){
-  const conf=typeof SUPABASE_URL==="undefined"||typeof SUPABASE_KEY==="undefined"||/TU-PROYECTO|TU-CLAVE/.test(SUPABASE_URL+SUPABASE_KEY);
+  const conf=!Cuenta.nube;
   $("conf").hidden=!conf;
-  if(conf){$("conf").innerHTML="<h2>Falta configurar</h2><p class=\"mu\">Abre el archivo <b>config.js</b> y pega la URL y la clave de tu proyecto de Supabase.</p>";$("login").hidden=true;$("app").hidden=true;return}
+  if(conf){$("conf").innerHTML="<h2>Falta configurar</h2><p class=\"mu\">Abre el archivo <b>config.js</b> y pega la URL y la clave de tu proyecto de Supabase.</p>";$("login").hidden=true;$("nom").hidden=true;$("app").hidden=true;return}
   const up=typeof SNAP!=="undefined"?new Intl.DateTimeFormat("es",{timeZone:TZ,weekday:"long",day:"numeric",month:"long",hour:"numeric",minute:"2-digit"}).format(SNAP):"";
   $("sub").textContent="Los mismos partidos de la Mesa de parley. Horas de Honduras."+(up?" Partidos actualizados: "+up+".":"");
-  $("login").hidden=!!me;$("app").hidden=!me;
-  if(!me)return;
-  $("yo").textContent=me.nombre;
+  const s=SES();
+  $("login").hidden=!!s;$("nom").hidden=!(s&&!s.nombre);$("app").hidden=!(s&&s.nombre);
+  if(!s||!s.nombre)return;
+  $("yo").textContent=s.nombre;
   $("gerr").textContent=gerr;
   $("tabs").innerHTML=TABS.map(([k,t])=>`<button type="button" class="tb${tab===k?" on":""}" data-tab="${k}">${t}</button>`).join("");
   const v=tab==="ranking"?vistaRanking():tab==="mis"?vistaMis():tab==="resultados"?vistaResultados():vistaPartidos();
@@ -295,9 +295,11 @@ function render(){
 }
 
 /* ---------- Eventos ---------- */
-$("le").addEventListener("click",entrar);
-$("lp").addEventListener("keydown",e=>{if(e.key==="Enter")entrar()});
-$("sl").addEventListener("click",()=>{LS.del("qn-me");me=null;render()});
+$("lin").addEventListener("click",()=>entrar(false));
+$("lcr").addEventListener("click",()=>entrar(true));
+$("lp").addEventListener("keydown",e=>{if(e.key==="Enter")entrar(false)});
+$("nns").addEventListener("click",guardaNombre);
+$("nn").addEventListener("keydown",e=>{if(e.key==="Enter")guardaNombre()});
 $("rf").addEventListener("click",async()=>{await cargar();toast("Actualizado")});
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;tab=b.dataset.tab;LS.set("qn-tab",tab);render()});
 $("vista").addEventListener("click",e=>{
@@ -307,9 +309,10 @@ $("vista").addEventListener("click",e=>{
   const r=e.target.closest("[data-rs]");
   if(r){const box=r.closest(".rs");guardaRes(box.dataset.id,r.dataset.rs,box.querySelector(".mc").value.trim())}
 });
-setInterval(()=>{if(me&&!document.hidden&&!gerr)cargar()},120000);
+Cuenta.alCambiar(()=>{render();if(SES()&&SES().nombre)cargar()});
+setInterval(()=>{if(SES()&&SES().nombre&&!document.hidden&&!gerr)cargar()},120000);
 render();
-if(me)cargar();
+(async()=>{if(SES()&&!SES().nombre){await Cuenta.cargaPerfil();render()}if(SES()&&SES().nombre)cargar()})();
 </script>
 </body>
 </html>
