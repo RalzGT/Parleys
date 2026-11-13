@@ -55,6 +55,7 @@ textarea{min-height:110px;resize:vertical}
 .err{color:var(--r);font-size:13px;margin:6px 0 0}
 a.mas{color:var(--ac);font-weight:800;text-decoration:none;font-size:13px}
 footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--bd)}
+.ok{color:var(--g);font-size:13px;margin:6px 0 0}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -66,6 +67,8 @@ footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--bd)}
 </header>
 <main class="w">
 <div class="grid">
+
+<section class="card full" id="cuenta" hidden></section>
 
 <section class="card" id="clima">
 <h2>Clima</h2>
@@ -108,11 +111,12 @@ footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--bd)}
 </div>
 </main>
 <footer class="w">
-<p class="mu">El clima viene de Open-Meteo y el tipo de cambio es un dato de mercado de referencia: tu banco o casa de cambio puede cobrar distinto. Los pendientes, las notas y los accesos se guardan solo en este dispositivo y navegador; en otro dispositivo verás otra lista.</p>
+<p class="mu">El clima viene de Open-Meteo y el tipo de cambio es un dato de mercado de referencia: tu banco o casa de cambio puede cobrar distinto. Sin cuenta, tus pendientes, notas y accesos se guardan solo en este dispositivo. Con cuenta se sincronizan entre tus dispositivos y solo tú los ves. Al salir de tu cuenta se borran de este dispositivo (siguen guardados en tu cuenta).</p>
 </footer>
+<script src="config.js"></script>
 <script src="data.js"></script>
 <script>
-const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
@@ -136,11 +140,11 @@ const fHr24=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",hour12:f
 /* ---- Saludo y fecha ---- */
 function cabecera(){
   const h=+fHr24.format(new Date()),yo=LS.get("qn-me",null);
+  const nombre=ses&&ses.user&&ses.user.email?ses.user.email.split("@")[0]:(yo&&yo.nombre)||"";
   const s=h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches";
-  $("hola").innerHTML=yo&&yo.nombre?esc(s)+", <b>"+esc(yo.nombre)+"</b>":"Mi <b>panel</b>";
+  $("hola").innerHTML=nombre?esc(s)+", <b>"+esc(nombre)+"</b>":"Mi <b>panel</b>";
   $("fecha").textContent=cap(fDia.format(new Date()))+" · "+fHora.format(new Date())+" (hora de Honduras)";
 }
-cabecera();setInterval(cabecera,30000);
 
 /* ---- Tema ---- */
 $("th").addEventListener("click",()=>{
@@ -219,18 +223,140 @@ function parley(){
     "<a class=\"mas\" href=\"index.html\">Ver todos los partidos →</a> · <a class=\"mas\" href=\"quiniela.html\">Ir a la quiniela →</a>";
 }
 
+/* ---- Estado: pendientes, accesos y nota (con fechas para poder mezclar entre dispositivos) ---- */
+const newId=()=>Date.now()*1000+Math.floor(Math.random()*1000);
+const VACIO=()=>({todo:[],links:[],nota:{t:"",u:0}});
+const canonT=t=>{const o={id:t.id,t:String(t.t||""),h:t.h?1:0,u:t.u||0};if(t.x)o.x=1;return o};
+const canonL=l=>{const o={id:l.id,n:String(l.n||""),url:String(l.url||""),u:l.u||0};if(l.x)o.x=1;return o};
+function normaliza(d){
+  d=d||{};const lim=Date.now()-60*864e5;
+  const lista=(a,f)=>(Array.isArray(a)?a:[]).filter(x=>x&&x.id!=null&&!(x.x&&(x.u||0)<lim)).map(f).sort((p,q)=>p.id-q.id);
+  const n=d.nota&&typeof d.nota==="object"?{t:String(d.nota.t||""),u:d.nota.u||0}:{t:"",u:0};
+  return{todo:lista(d.todo,canonT),links:lista(d.links,canonL),nota:n};
+}
+function mezclaLista(a,b){const m=new Map();for(const it of a.concat(b)){const o=m.get(it.id);if(!o||it.u>o.u)m.set(it.id,it)}return[...m.values()]}
+function mezclar(l,r){l=normaliza(l);r=normaliza(r);return normaliza({todo:mezclaLista(l.todo,r.todo),links:mezclaLista(l.links,r.links),nota:r.nota.u>l.nota.u?r.nota:l.nota})}
+function cargaLocal(){
+  const e=LS.get("pn-estado",null);if(e)return normaliza(e);
+  // Viene de la versión anterior (sin cuenta): se conserva lo que ya tenías
+  const ahora=Date.now(),t=LS.get("pn-todo",[]),l=LS.get("pn-links",[]),n=LS.get("pn-notas","");
+  const o=VACIO();
+  t.forEach((x,i)=>o.todo.push({id:newId()+i,t:x.t,h:x.h?1:0,u:ahora}));
+  l.forEach((x,i)=>o.links.push({id:newId()+i,n:x.n,url:x.u,u:ahora}));
+  if(n)o.nota={t:n,u:ahora};
+  return normaliza(o);
+}
+let E=cargaLocal();
+const guardaLocal=()=>LS.set("pn-estado",E);
+function guardar(){guardaLocal();programaSync()}
+
+/* ---- Cuenta y sincronización (Supabase) ---- */
+const NUBE=typeof SUPABASE_URL!=="undefined"&&typeof SUPABASE_KEY!=="undefined"&&!/TU-PROYECTO|TU-CLAVE/.test(SUPABASE_URL+SUPABASE_KEY);
+let ses=LS.get("pn-ses",null),syTxt="",syErr=false,sincronizando=false,pendienteSync=false,tSync;
+function guardaSes(j){
+  ses={access_token:j.access_token,refresh_token:j.refresh_token,expires_at:j.expires_at||Math.floor(Date.now()/1000)+(j.expires_in||3600),user:{id:j.user.id,email:j.user.email}};
+  LS.set("pn-ses",ses);
+}
+async function authPost(ruta,cuerpo,tk){
+  const h={apikey:SUPABASE_KEY,"Content-Type":"application/json"};if(tk)h.Authorization="Bearer "+tk;
+  const r=await fetch(SUPABASE_URL+ruta,{method:"POST",headers:h,body:JSON.stringify(cuerpo||{})});
+  const t=await r.text();let j=null;try{j=t?JSON.parse(t):null}catch(e){}
+  if(!r.ok){const e=new Error((j&&(j.msg||j.message||j.error_description))||("HTTP "+r.status));e.code=j&&(j.error_code||j.code);e.status=r.status;throw e}
+  return j;
+}
+async function token(){
+  if(!ses)throw new Error("sin sesión");
+  if(ses.expires_at-60>Date.now()/1000)return ses.access_token;
+  try{const j=await authPost("/auth/v1/token?grant_type=refresh_token",{refresh_token:ses.refresh_token});guardaSes(j);return ses.access_token}
+  catch(e){
+    if(e.status>=400&&e.status<500&&e.status!==429){ses=null;LS.del("pn-ses");pintaCuenta();cabecera()}
+    throw e;
+  }
+}
+async function rest(ruta,opt){
+  opt=opt||{};const tk=await token();
+  const r=await fetch(SUPABASE_URL+"/rest/v1/"+ruta,{method:opt.method||"GET",headers:Object.assign({apikey:SUPABASE_KEY,Authorization:"Bearer "+tk,"Content-Type":"application/json"},opt.headers||{}),body:opt.body});
+  const t=await r.text();
+  if(!r.ok)throw new Error(r.status+" "+t.slice(0,120));
+  return t?JSON.parse(t):null;
+}
+function estadoSync(txt,err){syTxt=txt;syErr=!!err;const e=$("sy");if(e){e.textContent=txt;e.className=err?"err":"ok"}}
+function programaSync(){if(!ses||!NUBE)return;clearTimeout(tSync);tSync=setTimeout(sincronizar,700)}
+async function sincronizar(){
+  if(!ses||!NUBE)return;
+  if(sincronizando){pendienteSync=true;return}
+  sincronizando=true;estadoSync("Sincronizando…",false);
+  try{
+    const filas=await rest("panel?select=datos&user_id=eq."+encodeURIComponent(ses.user.id));
+    const remoto=normaliza(filas&&filas[0]?filas[0].datos:null);
+    const mezcla=mezclar(E,remoto);
+    const cambioLocal=JSON.stringify(mezcla)!==JSON.stringify(normaliza(E));
+    E=mezcla;guardaLocal();
+    if(cambioLocal){pintaTodo();accesos();pintaNota()}
+    if(JSON.stringify(mezcla)!==JSON.stringify(remoto)){
+      await rest("panel?on_conflict=user_id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify([{user_id:ses.user.id,datos:E,actualizado:new Date().toISOString()}])});
+    }
+    estadoSync("Sincronizado ✓ "+fHora.format(new Date()),false);
+  }catch(e){estadoSync("No pude sincronizar ("+String(e.message).slice(0,70)+")",true)}
+  finally{sincronizando=false;if(pendienteSync){pendienteSync=false;programaSync()}}
+}
+function msgErr(e){
+  const c=e.code||"",m=String(e.message||"").toLowerCase();
+  if(c==="invalid_credentials"||m.includes("invalid login"))return"Correo o contraseña incorrectos.";
+  if(c==="user_already_exists"||m.includes("already registered"))return"Ese correo ya tiene cuenta. Usa «Entrar».";
+  if(c==="weak_password"||m.includes("password should"))return"La contraseña es muy débil (mínimo 6 caracteres).";
+  if(c==="email_not_confirmed")return"Tu correo todavía no está confirmado.";
+  if(c==="signup_disabled")return"Las cuentas nuevas están desactivadas en este proyecto.";
+  if(c==="over_request_rate_limit"||c==="over_email_send_rate_limit"||e.status===429)return"Demasiados intentos. Espera un momento.";
+  if(!e.status)return"No pude conectar. Revisa tu internet.";
+  return e.message;
+}
+function pintaCuenta(){
+  const c=$("cuenta");if(!NUBE){c.hidden=true;return}
+  c.hidden=false;
+  if(!ses){
+    c.innerHTML=`<h2>Tu cuenta</h2><p class="mu">Crea tu cuenta para que tus pendientes, notas y accesos se sincronicen entre tus dispositivos. Cada persona tiene la suya y nadie más ve tus datos.</p><div class="fx"><label>Correo<input type="text" id="ce" inputmode="email" autocapitalize="off" autocomplete="email"></label><label>Contraseña (mínimo 6)<input type="password" id="cp" autocomplete="current-password"></label></div><div class="row" style="margin-top:10px;gap:8px"><button type="button" class="btn" id="cin">Entrar</button><button type="button" class="btn o" id="ccr">Crear cuenta</button></div><p class="err" id="cerr"></p>`;
+    return;
+  }
+  c.innerHTML=`<h2>Tu cuenta</h2><p>Sesión iniciada: <b>${esc(ses.user.email)}</b></p><p class="${syErr?"err":"ok"}" id="sy">${esc(syTxt)}</p><div class="row" style="margin-top:10px;gap:8px"><button type="button" class="btn o s" id="csy">Sincronizar ahora</button><button type="button" class="btn o s" id="cout">Salir</button></div><p class="err" id="cerr"></p>`;
+}
+async function entrarCuenta(nuevo){
+  const em=$("ce").value.trim().toLowerCase(),pw=$("cp").value,er=$("cerr");er.textContent="";
+  if(!/^\S+@\S+\.\S+$/.test(em)){er.textContent="Escribe un correo válido.";return}
+  if(pw.length<6){er.textContent="La contraseña debe tener al menos 6 caracteres.";return}
+  $("cin").disabled=$("ccr").disabled=true;
+  try{
+    const j=nuevo?await authPost("/auth/v1/signup",{email:em,password:pw}):await authPost("/auth/v1/token?grant_type=password",{email:em,password:pw});
+    if(!j||!j.access_token){er.textContent="Cuenta creada. Revisa tu correo para confirmarla y luego pulsa «Entrar».";return}
+    guardaSes(j);syTxt="";pintaCuenta();cabecera();await sincronizar();
+  }catch(e){er.textContent=msgErr(e)}
+  finally{if($("cin")){$("cin").disabled=false;$("ccr").disabled=false}}
+}
+async function salirCuenta(){
+  clearTimeout(tSync);await sincronizar();
+  if(syErr&&!confirm("No pude subir tus últimos cambios. Si sales ahora se pierden. ¿Salir de todos modos?"))return;
+  try{const tk=ses.access_token;await authPost("/auth/v1/logout",{},tk)}catch(e){}
+  ses=null;LS.del("pn-ses");E=VACIO();LS.del("pn-estado");syTxt="";syErr=false;
+  pintaCuenta();cabecera();pintaTodo();accesos();pintaNota();
+}
+$("cuenta").addEventListener("click",e=>{
+  const id=e.target.id;
+  if(id==="cin")entrarCuenta(false);else if(id==="ccr")entrarCuenta(true);
+  else if(id==="csy")sincronizar();else if(id==="cout")salirCuenta();
+});
+$("cuenta").addEventListener("keydown",e=>{if(e.key==="Enter"&&(e.target.id==="cp"||e.target.id==="ce"))entrarCuenta(false)});
+
 /* ---- Accesos rápidos ---- */
 let editando=false;
-const propios=()=>LS.get("pn-links",[]);
 function urlValida(s){
   s=s.trim();if(!s)return null;
   if(!/^[a-z][a-z0-9+.-]*:/i.test(s))s="https://"+s;
   try{const u=new URL(s);return u.protocol==="http:"||u.protocol==="https:"?u.href:null}catch(e){return null}
 }
 function accesos(){
-  const p=propios();
+  const p=E.links.filter(l=>!l.x);
   $("lk").innerHTML=ACCESOS.map(a=>`<a href="${esc(a.u)}"${/^https?:/.test(a.u)?' target="_blank" rel="noopener"':""}>${esc(a.n)}</a>`).join("")+
-    p.map((a,i)=>`<a href="${esc(a.u)}" target="_blank" rel="noopener">${esc(a.n)}${editando?`<button type="button" data-del="${i}" aria-label="Quitar">✕</button>`:""}</a>`).join("");
+    p.map(a=>`<a href="${esc(a.url)}" target="_blank" rel="noopener">${esc(a.n)}${editando?`<button type="button" data-del="${a.id}" aria-label="Quitar">✕</button>`:""}</a>`).join("");
   $("lform").hidden=!editando;$("edl").textContent=editando?"Listo":"Editar";
 }
 $("edl").addEventListener("click",()=>{editando=!editando;accesos()});
@@ -238,43 +364,48 @@ $("la").addEventListener("click",()=>{
   const n=$("ln").value.trim(),u=urlValida($("lu").value),er=$("lerr");er.textContent="";
   if(!n){er.textContent="Ponle un nombre.";return}
   if(!u){er.textContent="Esa dirección no es válida.";return}
-  const p=propios();p.push({n,u});LS.set("pn-links",p);$("ln").value="";$("lu").value="";accesos();
+  E.links.push({id:newId(),n,url:u,u:Date.now()});guardar();$("ln").value="";$("lu").value="";accesos();
 });
 $("lk").addEventListener("click",e=>{
   const b=e.target.closest("[data-del]");if(!b)return;
-  e.preventDefault();const p=propios();p.splice(+b.dataset.del,1);LS.set("pn-links",p);accesos();
+  e.preventDefault();const l=E.links.find(x=>x.id===+b.dataset.del);if(l){l.x=1;l.u=Date.now();l.n="";l.url=""}guardar();accesos();
 });
 
 /* ---- Pendientes ---- */
-let todo=LS.get("pn-todo",[]);
 function pintaTodo(){
-  const L=[...todo].sort((a,b)=>a.h-b.h||b.id-a.id);
+  const L=E.todo.filter(t=>!t.x).sort((a,b)=>a.h-b.h||b.id-a.id);
   $("tl").innerHTML=L.length?L.map(t=>`<div class="t${t.h?" hecho":""}"><input type="checkbox" data-id="${t.id}"${t.h?" checked":""}><span>${esc(t.t)}</span><button type="button" data-x="${t.id}" aria-label="Borrar">✕</button></div>`).join(""):"<p class=\"mu\">Nada pendiente. 🎉</p>";
-  const n=todo.filter(t=>!t.h).length;
+  const n=L.filter(t=>!t.h).length;
   $("tc").textContent=n===1?"1 pendiente":n+" pendientes";
-  $("tb").hidden=!todo.some(t=>t.h);
+  $("tb").hidden=!L.some(t=>t.h);
 }
 function addTodo(){
   const v=$("ti").value.trim();if(!v)return;
-  todo.push({id:Date.now(),t:v,h:0});LS.set("pn-todo",todo);$("ti").value="";pintaTodo();
+  E.todo.push({id:newId(),t:v,h:0,u:Date.now()});guardar();$("ti").value="";pintaTodo();
 }
 $("ta").addEventListener("click",addTodo);
 $("ti").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
 $("tl").addEventListener("click",e=>{
   const c=e.target.closest("input[data-id]"),x=e.target.closest("[data-x]");
-  if(c){const t=todo.find(t=>t.id===+c.dataset.id);if(t){t.h=c.checked?1:0;LS.set("pn-todo",todo);pintaTodo()}}
-  if(x){todo=todo.filter(t=>t.id!==+x.dataset.x);LS.set("pn-todo",todo);pintaTodo()}
+  if(c){const t=E.todo.find(t=>t.id===+c.dataset.id);if(t){t.h=c.checked?1:0;t.u=Date.now();guardar();pintaTodo()}}
+  if(x){const t=E.todo.find(t=>t.id===+x.dataset.x);if(t){t.x=1;t.u=Date.now();t.t="";guardar();pintaTodo()}}
 });
-$("tb").addEventListener("click",()=>{todo=todo.filter(t=>!t.h);LS.set("pn-todo",todo);pintaTodo()});
+$("tb").addEventListener("click",()=>{const u=Date.now();E.todo.forEach(t=>{if(t.h&&!t.x){t.x=1;t.u=u;t.t=""}});guardar();pintaTodo()});
 
 /* ---- Notas ---- */
-$("nt").value=LS.get("pn-notas","");
+function pintaNota(){if(document.activeElement!==$("nt"))$("nt").value=E.nota.t}
 let nT;$("nt").addEventListener("input",()=>{
   clearTimeout(nT);$("ns").textContent="Guardando…";
-  nT=setTimeout(()=>{LS.set("pn-notas",$("nt").value);$("ns").textContent="Guardado en este dispositivo ✓"},400);
+  nT=setTimeout(()=>{E.nota={t:$("nt").value,u:Date.now()};guardar();$("ns").textContent=ses?"Guardado ✓ (se sincroniza)":"Guardado en este dispositivo ✓"},400);
 });
 
-accesos();pintaTodo();parley();clima();cambio();
+/* ---- Arranque ---- */
+cabecera();setInterval(cabecera,30000);
+pintaCuenta();accesos();pintaTodo();pintaNota();parley();clima();cambio();
+if(ses)sincronizar();
+setInterval(()=>{if(ses&&!document.hidden)sincronizar()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){cabecera();sincronizar()}});
+window.addEventListener("online",sincronizar);
 </script>
 </body>
 </html>
