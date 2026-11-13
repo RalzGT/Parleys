@@ -1,0 +1,45 @@
+name: Actualizar partidos y publicar
+
+on:
+  schedule:
+    - cron: "0 11 * * *"   # todos los días a las 5:00 a. m. de Honduras
+  workflow_dispatch:        # botón para correrlo a mano
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generar data.js
+        run: python3 update.py
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+
+      - name: Preparar sitio
+        run: |
+          mkdir site
+          cp index.html data.js site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
