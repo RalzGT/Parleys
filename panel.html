@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<script>try{var t=JSON.parse(localStorage.getItem("mp-th"));document.documentElement.dataset.theme=t||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<title>Mi panel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--bg:#eef2fb;--cd:#fff;--tx:#0d1526;--mu:#5d6b85;--on:#fff;--ac:#0a8f5c;--a2:#7c3aed;--g:#12915b;--m:#b8700b;--r:#d6304c;--gb:rgba(18,145,91,.12);--rb:rgba(214,48,76,.11);--gl:rgba(255,255,255,.78);--bd:rgba(13,21,38,.09);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#060a13;--cd:#0e1524;--tx:#ecf2fa;--mu:#8e9db4;--on:#04120c;--ac:#2ee6a0;--a2:#9b6bff;--g:#3df0a8;--m:#ffcf4d;--r:#ff6d85;--gb:rgba(61,240,168,.14);--rb:rgba(255,109,133,.14);--gl:rgba(255,255,255,.055);--bd:rgba(255,255,255,.11)}}
+:root[data-theme="dark"]{--bg:#060a13;--cd:#0e1524;--tx:#ecf2fa;--mu:#8e9db4;--on:#04120c;--ac:#2ee6a0;--a2:#9b6bff;--g:#3df0a8;--m:#ffcf4d;--r:#ff6d85;--gb:rgba(61,240,168,.14);--rb:rgba(255,109,133,.14);--gl:rgba(255,255,255,.055);--bd:rgba(255,255,255,.11)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding-bottom:70px;color:var(--tx);font:15px/1.45 "Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(900px 520px at 8% -12%,color-mix(in srgb,var(--ac) 24%,transparent),transparent 62%),radial-gradient(820px 480px at 96% 2%,color-mix(in srgb,var(--a2) 20%,transparent),transparent 60%),var(--bg);background-attachment:fixed}
+.w{max-width:760px;margin:0 auto;padding:0 14px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif}
+h1{font-size:clamp(38px,9vw,56px);line-height:.95;margin:10px 0 6px}
+h1 b{color:var(--ac)}
+h2{font-size:24px;margin:0 0 8px}
+.mu{color:var(--mu);font-size:13px;margin:0}
+.top{display:flex;gap:8px;align-items:center;padding-top:12px;flex-wrap:wrap}
+.top a,.top button{padding:6px 12px;border:1px solid var(--bd);border-radius:999px;background:var(--gl);color:var(--tx);text-decoration:none;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.top a.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.top .sp{flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.card{background:var(--gl);border:1px solid var(--bd);border-radius:18px;padding:14px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.card.full{grid-column:1/-1}
+.big{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:64px;line-height:1;font-weight:700}
+.row{display:flex;align-items:center;gap:12px}
+.emo{font-size:46px;line-height:1}
+.dias{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.dias div{border:1px solid var(--bd);border-radius:12px;padding:8px;text-align:center;font-size:13px}
+.dias b{display:block;font-size:12px;color:var(--mu);font-weight:700}
+.fx{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fx label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mu)}
+input[type=text],input[type=number],textarea{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--gl);color:var(--tx);width:100%}
+textarea{min-height:110px;resize:vertical}
+.btn{font:inherit;font-size:14px;font-weight:700;padding:10px 14px;border:1px solid var(--ac);border-radius:12px;background:var(--ac);color:var(--on);cursor:pointer}
+.btn.o{background:transparent;color:var(--tx);border-color:var(--bd)}
+.btn.s{padding:6px 10px;font-size:13px}
+.add{display:flex;gap:6px;margin-bottom:8px}
+.t{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--bd)}
+.t:last-child{border-bottom:0}
+.t input{width:20px;height:20px;accent-color:var(--ac);flex:none}
+.t span{flex:1;overflow-wrap:anywhere}
+.t.hecho span{text-decoration:line-through;color:var(--mu)}
+.t button{background:none;border:0;color:var(--mu);font-size:18px;cursor:pointer;padding:2px 6px}
+.pick{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.pick:last-of-type{border-bottom:0}
+.pick .p{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:24px;font-weight:700;color:var(--ac)}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.links a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--gl);color:var(--tx);text-decoration:none;font-weight:700;font-size:14px}
+.links a button{border:0;background:none;color:var(--r);font-size:15px;cursor:pointer;padding:0 0 0 4px}
+.err{color:var(--r);font-size:13px;margin:6px 0 0}
+a.mas{color:var(--ac);font-weight:800;text-decoration:none;font-size:13px}
+footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--bd)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="w">
+<div class="top"><a href="panel.html" class="on">Panel</a><a href="index.html">Mesa de parley</a><a href="quiniela.html">Quiniela</a><span class="sp"></span><button type="button" id="th" aria-label="Cambiar tema">🌓</button></div>
+<h1 id="hola">Mi <b>panel</b></h1>
+<p class="mu" id="fecha"></p>
+</header>
+<main class="w">
+<div class="grid">
+
+<section class="card" id="clima">
+<h2>Clima</h2>
+<p class="mu">Cargando…</p>
+</section>
+
+<section class="card" id="cambio">
+<h2>Dólar a lempiras</h2>
+<p class="mu">Cargando…</p>
+</section>
+
+<section class="card full" id="parley">
+<h2>Hoy en la Mesa de parley</h2>
+<div id="pk"></div>
+</section>
+
+<section class="card full">
+<div class="row" style="justify-content:space-between"><h2 style="margin:0">Accesos rápidos</h2><button type="button" class="btn o s" id="edl">Editar</button></div>
+<div class="links" id="lk" style="margin-top:10px"></div>
+<div id="lform" hidden style="margin-top:10px">
+<div class="add"><input type="text" id="ln" placeholder="Nombre" maxlength="20"><input type="text" id="lu" placeholder="Dirección (https://…)" inputmode="url" autocapitalize="off"></div>
+<button type="button" class="btn s" id="la">Añadir acceso</button>
+<p class="err" id="lerr"></p>
+</div>
+</section>
+
+<section class="card">
+<h2>Pendientes</h2>
+<div class="add"><input type="text" id="ti" placeholder="Nuevo pendiente" maxlength="120"><button type="button" class="btn" id="ta">＋</button></div>
+<div id="tl"></div>
+<div class="row" style="justify-content:space-between;margin-top:8px"><span class="mu" id="tc"></span><button type="button" class="btn o s" id="tb">Borrar hechos</button></div>
+</section>
+
+<section class="card">
+<h2>Notas rápidas</h2>
+<textarea id="nt" placeholder="Escribe lo que quieras recordar…"></textarea>
+<p class="mu" id="ns" style="margin-top:6px"></p>
+</section>
+
+</div>
+</main>
+<footer class="w">
+<p class="mu">El clima viene de Open-Meteo y el tipo de cambio es un dato de mercado de referencia: tu banco o casa de cambio puede cobrar distinto. Los pendientes, las notas y los accesos se guardan solo en este dispositivo y navegador; en otro dispositivo verás otra lista.</p>
+</footer>
+<script src="data.js"></script>
+<script>
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+/* ---- Ajustes que puedes cambiar ---- */
+const CIUDAD={nombre:"San Pedro Sula",lat:15.5042,lon:-88.025};
+const TZ="America/Tegucigalpa";
+const ACCESOS=[
+  {n:"Mesa de parley",u:"index.html"},
+  {n:"Quiniela",u:"quiniela.html"},
+  {n:"GitHub",u:"https://github.com/RalzGT/Ralz-Parleys"},
+  {n:"Robot (Actions)",u:"https://github.com/RalzGT/Ralz-Parleys/actions"},
+  {n:"Supabase",u:"https://supabase.com/dashboard"}
+];
+
+const fDia=new Intl.DateTimeFormat("es",{timeZone:TZ,weekday:"long",day:"numeric",month:"long"});
+const fHora=new Intl.DateTimeFormat("es",{timeZone:TZ,hour:"numeric",minute:"2-digit",hour12:true});
+const fSem=new Intl.DateTimeFormat("es",{timeZone:TZ,weekday:"short"});
+const fHr24=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",hour12:false});
+
+/* ---- Saludo y fecha ---- */
+function cabecera(){
+  const h=+fHr24.format(new Date()),yo=LS.get("qn-me",null);
+  const s=h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches";
+  $("hola").innerHTML=yo&&yo.nombre?esc(s)+", <b>"+esc(yo.nombre)+"</b>":"Mi <b>panel</b>";
+  $("fecha").textContent=cap(fDia.format(new Date()))+" · "+fHora.format(new Date())+" (hora de Honduras)";
+}
+cabecera();setInterval(cabecera,30000);
+
+/* ---- Tema ---- */
+$("th").addEventListener("click",()=>{
+  const c=document.documentElement.dataset.theme==="light"?"dark":"light";
+  document.documentElement.dataset.theme=c;LS.set("mp-th",c);
+});
+
+/* ---- Datos de internet con respaldo guardado ---- */
+async function traer(urls){
+  let ult;
+  for(const u of urls){
+    try{const r=await fetch(u);if(r.ok)return await r.json();ult=new Error("HTTP "+r.status)}catch(e){ult=e}
+  }
+  throw ult||new Error("sin conexión");
+}
+const hace=ts=>{const m=Math.round((Date.now()-ts)/60000);return m<60?"hace "+Math.max(m,1)+" min":m<1440?"hace "+Math.round(m/60)+" h":"hace "+Math.round(m/1440)+" d"};
+
+/* ---- Clima ---- */
+const WMO={0:["☀️","Despejado"],1:["🌤️","Mayormente despejado"],2:["⛅","Parcialmente nublado"],3:["☁️","Nublado"],45:["🌫️","Niebla"],48:["🌫️","Niebla"],51:["🌦️","Llovizna ligera"],53:["🌦️","Llovizna"],55:["🌧️","Llovizna fuerte"],56:["🌧️","Llovizna helada"],57:["🌧️","Llovizna helada"],61:["🌧️","Lluvia ligera"],63:["🌧️","Lluvia"],65:["🌧️","Lluvia fuerte"],66:["🌧️","Lluvia helada"],67:["🌧️","Lluvia helada"],71:["🌨️","Nieve ligera"],73:["🌨️","Nieve"],75:["🌨️","Nieve fuerte"],77:["🌨️","Nieve"],80:["🌦️","Chubascos ligeros"],81:["🌧️","Chubascos"],82:["⛈️","Chubascos fuertes"],85:["🌨️","Chubascos de nieve"],86:["🌨️","Chubascos de nieve"],95:["⛈️","Tormenta"],96:["⛈️","Tormenta con granizo"],99:["⛈️","Tormenta con granizo"]};
+const wmo=c=>WMO[c]||["🌡️","—"];
+function pintaClima(d,ts,viejo){
+  const c=d.current,dy=d.daily,[e,t]=wmo(c.weather_code);
+  let dias="";
+  for(let i=1;i<Math.min(4,dy.time.length);i++){
+    const f=new Date(dy.time[i]+"T12:00:00-06:00"),[ee]=wmo(dy.weather_code[i]);
+    dias+=`<div><b>${esc(cap(fSem.format(f)))}</b>${ee} ${Math.round(dy.temperature_2m_max[i])}° / ${Math.round(dy.temperature_2m_min[i])}°<br><span class="mu">☔ ${dy.precipitation_probability_max[i]??0}%</span></div>`;
+  }
+  $("clima").innerHTML=`<h2>Clima · ${esc(CIUDAD.nombre)}</h2><div class="row"><span class="emo">${e}</span><span class="big">${Math.round(c.temperature_2m)}°</span><div><b>${esc(t)}</b><p class="mu">Sensación ${Math.round(c.apparent_temperature)}° · Humedad ${Math.round(c.relative_humidity_2m)}%<br>Hoy: ${Math.round(dy.temperature_2m_max[0])}° / ${Math.round(dy.temperature_2m_min[0])}° · ☔ ${dy.precipitation_probability_max[0]??0}%</p></div></div><div class="dias">${dias}</div>${viejo?`<p class="err">Sin conexión: dato de ${hace(ts)}.</p>`:""}`;
+}
+async function clima(){
+  const url="https://api.open-meteo.com/v1/forecast?latitude="+CIUDAD.lat+"&longitude="+CIUDAD.lon+"&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone="+encodeURIComponent(TZ)+"&forecast_days=4";
+  try{
+    const d=await traer([url]);LS.set("pn-clima",{ts:Date.now(),d});pintaClima(d,Date.now(),false);
+  }catch(e){
+    const g=LS.get("pn-clima",null);
+    if(g)pintaClima(g.d,g.ts,true);else $("clima").innerHTML="<h2>Clima</h2><p class=\"err\">No pude cargar el clima. Revisa tu conexión.</p>";
+  }
+}
+
+/* ---- Tipo de cambio ---- */
+let TASA=0;
+function pintaCambio(tasa,fecha,ts,viejo){
+  TASA=tasa;
+  $("cambio").innerHTML=`<h2>Dólar a lempiras</h2><div class="row"><span class="big">L ${tasa.toFixed(2)}</span><p class="mu">por cada US$ 1<br>Dato del ${esc(fecha)}</p></div><div class="fx"><label>Dólares (USD)<input type="number" id="fu" inputmode="decimal" value="1" min="0" step="any"></label><label>Lempiras (HNL)<input type="number" id="fl" inputmode="decimal" value="${tasa.toFixed(2)}" min="0" step="any"></label></div>${viejo?`<p class="err">Sin conexión: dato de ${hace(ts)}.</p>`:""}`;
+  $("fu").addEventListener("input",()=>{const v=parseFloat($("fu").value);$("fl").value=isNaN(v)?"":(v*TASA).toFixed(2)});
+  $("fl").addEventListener("input",()=>{const v=parseFloat($("fl").value);$("fu").value=isNaN(v)?"":(v/TASA).toFixed(2)});
+}
+async function cambio(){
+  const urls=["https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json","https://latest.currency-api.pages.dev/v1/currencies/usd.min.json"];
+  try{
+    const d=await traer(urls),t=d&&d.usd&&d.usd.hnl;
+    if(!t)throw new Error("sin dato");
+    LS.set("pn-fx",{ts:Date.now(),t,f:d.date});pintaCambio(t,d.date,Date.now(),false);
+  }catch(e){
+    const g=LS.get("pn-fx",null);
+    if(g)pintaCambio(g.t,g.f,g.ts,true);else $("cambio").innerHTML="<h2>Dólar a lempiras</h2><p class=\"err\">No pude cargar el tipo de cambio. Revisa tu conexión.</p>";
+  }
+}
+
+/* ---- Hoy en la Mesa de parley (usa data.js) ---- */
+function fechaDe(r){const y=SNAP.getUTCFullYear();let d=new Date(y+"-"+r[1]+":00Z");if(d-SNAP<-1.5e10)d=new Date((y+1)+"-"+r[1]+":00Z");return d}
+function parley(){
+  const box=$("pk");
+  if(typeof S==="undefined"){box.innerHTML="<p class=\"mu\">No pude leer los partidos.</p>";return}
+  const ahora=Date.now(),L=[];
+  for(const x in S){for(const r of S[x].D){
+    const d=fechaDe(r).getTime();if(d<ahora||d>ahora+864e5)continue;
+    const tres=x==="f",ps=tres?[r[4],r[5],r[6]]:[r[4],r[5]],nm=tres?["Gana "+r[2],"Empate","Gana "+r[3]]:["Gana "+r[2],"Gana "+r[3]];
+    let mi=0;ps.forEach((p,i)=>{if(p>ps[mi])mi=i});
+    L.push({d,t:r[2]+" vs "+r[3],o:nm[mi],p:ps[mi]});
+  }}
+  L.sort((a,b)=>b.p-a.p);
+  if(!L.length){box.innerHTML="<p class=\"mu\">No hay partidos en las próximas 24 horas.</p><a class=\"mas\" href=\"index.html\">Abrir la Mesa de parley →</a>";return}
+  box.innerHTML="<p class=\"mu\" style=\"margin-bottom:6px\">Los 3 resultados más probables en las próximas 24 horas, según las cuotas del mercado. No son garantías.</p>"+
+    L.slice(0,3).map(m=>`<div class="pick"><div><b>${esc(m.o)}</b><p class="mu">${esc(m.t)} · ${esc(fHora.format(new Date(m.d)))}</p></div><span class="p">${Math.round(m.p)}%</span></div>`).join("")+
+    "<a class=\"mas\" href=\"index.html\">Ver todos los partidos →</a> · <a class=\"mas\" href=\"quiniela.html\">Ir a la quiniela →</a>";
+}
+
+/* ---- Accesos rápidos ---- */
+let editando=false;
+const propios=()=>LS.get("pn-links",[]);
+function urlValida(s){
+  s=s.trim();if(!s)return null;
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(s))s="https://"+s;
+  try{const u=new URL(s);return u.protocol==="http:"||u.protocol==="https:"?u.href:null}catch(e){return null}
+}
+function accesos(){
+  const p=propios();
+  $("lk").innerHTML=ACCESOS.map(a=>`<a href="${esc(a.u)}"${/^https?:/.test(a.u)?' target="_blank" rel="noopener"':""}>${esc(a.n)}</a>`).join("")+
+    p.map((a,i)=>`<a href="${esc(a.u)}" target="_blank" rel="noopener">${esc(a.n)}${editando?`<button type="button" data-del="${i}" aria-label="Quitar">✕</button>`:""}</a>`).join("");
+  $("lform").hidden=!editando;$("edl").textContent=editando?"Listo":"Editar";
+}
+$("edl").addEventListener("click",()=>{editando=!editando;accesos()});
+$("la").addEventListener("click",()=>{
+  const n=$("ln").value.trim(),u=urlValida($("lu").value),er=$("lerr");er.textContent="";
+  if(!n){er.textContent="Ponle un nombre.";return}
+  if(!u){er.textContent="Esa dirección no es válida.";return}
+  const p=propios();p.push({n,u});LS.set("pn-links",p);$("ln").value="";$("lu").value="";accesos();
+});
+$("lk").addEventListener("click",e=>{
+  const b=e.target.closest("[data-del]");if(!b)return;
+  e.preventDefault();const p=propios();p.splice(+b.dataset.del,1);LS.set("pn-links",p);accesos();
+});
+
+/* ---- Pendientes ---- */
+let todo=LS.get("pn-todo",[]);
+function pintaTodo(){
+  const L=[...todo].sort((a,b)=>a.h-b.h||b.id-a.id);
+  $("tl").innerHTML=L.length?L.map(t=>`<div class="t${t.h?" hecho":""}"><input type="checkbox" data-id="${t.id}"${t.h?" checked":""}><span>${esc(t.t)}</span><button type="button" data-x="${t.id}" aria-label="Borrar">✕</button></div>`).join(""):"<p class=\"mu\">Nada pendiente. 🎉</p>";
+  const n=todo.filter(t=>!t.h).length;
+  $("tc").textContent=n===1?"1 pendiente":n+" pendientes";
+  $("tb").hidden=!todo.some(t=>t.h);
+}
+function addTodo(){
+  const v=$("ti").value.trim();if(!v)return;
+  todo.push({id:Date.now(),t:v,h:0});LS.set("pn-todo",todo);$("ti").value="";pintaTodo();
+}
+$("ta").addEventListener("click",addTodo);
+$("ti").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+$("tl").addEventListener("click",e=>{
+  const c=e.target.closest("input[data-id]"),x=e.target.closest("[data-x]");
+  if(c){const t=todo.find(t=>t.id===+c.dataset.id);if(t){t.h=c.checked?1:0;LS.set("pn-todo",todo);pintaTodo()}}
+  if(x){todo=todo.filter(t=>t.id!==+x.dataset.x);LS.set("pn-todo",todo);pintaTodo()}
+});
+$("tb").addEventListener("click",()=>{todo=todo.filter(t=>!t.h);LS.set("pn-todo",todo);pintaTodo()});
+
+/* ---- Notas ---- */
+$("nt").value=LS.get("pn-notas","");
+let nT;$("nt").addEventListener("input",()=>{
+  clearTimeout(nT);$("ns").textContent="Guardando…";
+  nT=setTimeout(()=>{LS.set("pn-notas",$("nt").value);$("ns").textContent="Guardado en este dispositivo ✓"},400);
+});
+
+accesos();pintaTodo();parley();clima();cambio();
+</script>
+</body>
+</html>
