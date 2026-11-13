@@ -30,10 +30,24 @@ jobs:
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
 
+      - name: Mantener activo Supabase
+        run: |
+          python3 - <<'PY'
+          import re, urllib.request
+          try:
+              c = open("config.js", encoding="utf-8").read()
+              url = re.search(r'SUPABASE_URL\s*=\s*"([^"]+)"', c).group(1)
+              key = re.search(r'SUPABASE_KEY\s*=\s*"([^"]+)"', c).group(1)
+              req = urllib.request.Request(url + "/rest/v1/jugadores?select=nombre&limit=1", headers={"apikey": key})
+              print("Supabase respondió:", urllib.request.urlopen(req, timeout=30).status)
+          except Exception as e:
+              print("Aviso: no pude despertar Supabase:", e)
+          PY
+
       - name: Preparar sitio
         run: |
           mkdir site
-          cp index.html data.js site/
+          cp *.html *.js site/
 
       - uses: actions/configure-pages@v5
 
