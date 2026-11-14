@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<script>try{var t=JSON.parse(localStorage.getItem("mp-th"));document.documentElement.dataset.theme=t||"dark"}catch(e){document.documentElement.dataset.theme="dark"}</script>
+<title>Mi panel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{--bg:#eef2fb;--cd:#fff;--tx:#0d1526;--mu:#5d6b85;--on:#fff;--ac:#0a8f5c;--a2:#7c3aed;--g:#12915b;--m:#b8700b;--r:#d6304c;--bl:#1f6fd1;--gb:rgba(18,145,91,.12);--rb:rgba(214,48,76,.11);--mb:rgba(184,112,11,.13);--gl:rgba(255,255,255,.78);--bd:rgba(13,21,38,.09);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#060a13;--cd:#0e1524;--tx:#ecf2fa;--mu:#8e9db4;--on:#04120c;--ac:#2ee6a0;--a2:#9b6bff;--g:#3df0a8;--m:#ffcf4d;--r:#ff6d85;--bl:#5aa9ff;--gb:rgba(61,240,168,.14);--rb:rgba(255,109,133,.14);--mb:rgba(255,207,77,.14);--gl:rgba(255,255,255,.055);--bd:rgba(255,255,255,.11)}}
+:root[data-theme="dark"]{--bg:#060a13;--cd:#0e1524;--tx:#ecf2fa;--mu:#8e9db4;--on:#04120c;--ac:#2ee6a0;--a2:#9b6bff;--g:#3df0a8;--m:#ffcf4d;--r:#ff6d85;--bl:#5aa9ff;--gb:rgba(61,240,168,.14);--rb:rgba(255,109,133,.14);--mb:rgba(255,207,77,.14);--gl:rgba(255,255,255,.055);--bd:rgba(255,255,255,.11)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;padding-bottom:70px;color:var(--tx);font:15px/1.45 "Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(900px 520px at 8% -12%,color-mix(in srgb,var(--ac) 24%,transparent),transparent 62%),radial-gradient(820px 480px at 96% 2%,color-mix(in srgb,var(--a2) 20%,transparent),transparent 60%),var(--bg);background-attachment:fixed}
+.w{max-width:820px;margin:0 auto;padding:0 14px}
+h1,h2,h3{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif}
+h1{font-size:clamp(38px,9vw,56px);line-height:.95;margin:10px 0 6px}
+h1 b{color:var(--ac)}
+h2{font-size:24px;margin:0 0 8px}
+h3{font-size:19px;margin:14px 0 6px}
+.mu{color:var(--mu);font-size:13px;margin:0}
+small{opacity:.75}
+.top{display:flex;gap:8px;align-items:center;padding-top:12px;flex-wrap:wrap}
+.top a,.top button{padding:6px 12px;border:1px solid var(--bd);border-radius:999px;background:var(--gl);color:var(--tx);text-decoration:none;font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.top a.on,.top button.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.top .sp{flex:1}
+.pzb{padding:6px 12px;border:1px solid var(--bd);border-radius:999px;background:var(--gl);color:var(--tx);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.pzb.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px;margin-top:10px}
+.card{background:var(--gl);border:1px solid var(--bd);border-radius:18px;padding:14px;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);min-width:0}
+.card.full{grid-column:1/-1}
+.card.solo{margin-top:10px}
+.big{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:64px;line-height:1;font-weight:700}
+.row{display:flex;align-items:center;gap:12px}
+.emo{font-size:46px;line-height:1}
+.dias{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:12px}
+.dias div{border:1px solid var(--bd);border-radius:12px;padding:8px;text-align:center;font-size:13px}
+.dias b{display:block;font-size:12px;color:var(--mu);font-weight:700}
+.fx{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.fx label,.f1 label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mu)}
+.f1{display:grid;gap:8px;margin-top:10px}
+input[type=text],input[type=number],input[type=password],input[type=date],textarea,select{font:inherit;font-size:16px;padding:10px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--gl);color:var(--tx);width:100%;min-width:0}
+select{font-size:14px;padding:9px 10px}
+select option{background:var(--cd);color:var(--tx)}
+textarea{min-height:200px;resize:vertical}
+.btn{font:inherit;font-size:14px;font-weight:700;padding:10px 14px;border:1px solid var(--ac);border-radius:12px;background:var(--ac);color:var(--on);cursor:pointer}
+.btn.o{background:transparent;color:var(--tx);border-color:var(--bd)}
+.btn.s{padding:6px 10px;font-size:13px}
+.btn.d{background:transparent;color:var(--r);border-color:var(--bd)}
+.btn:disabled{opacity:.6}
+.add{display:flex;gap:6px;margin-bottom:8px}
+.l2{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap}
+.l2>*{flex:1 1 120px}
+.comp{margin-bottom:6px}
+.ch{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none;flex-wrap:wrap}
+.ch button{flex:none;padding:6px 12px;border:1px solid var(--bd);border-radius:999px;background:var(--gl);color:var(--tx);font:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.ch button.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+.bar{height:8px;border-radius:999px;background:var(--bd);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ac);transition:width .3s}
+.t{display:flex;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--bd)}
+.t:last-child{border-bottom:0}
+.t>input[type=checkbox]{width:22px;height:22px;accent-color:var(--ac);flex:none}
+.t .tx{flex:1;min-width:0}
+.t .tx>span{overflow-wrap:anywhere}
+.t.hecho .tx>span{text-decoration:line-through;color:var(--mu)}
+.t .meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.t.ed{align-items:flex-start}
+.ib{background:none;border:0;color:var(--mu);font-size:16px;cursor:pointer;padding:4px 7px;border-radius:8px}
+.ib:hover{background:var(--gl)}
+.bd{display:inline-block;font-size:12px;font-weight:700;padding:1px 8px;border-radius:999px;border:1px solid var(--bd);color:var(--mu)}
+.bd.hoy{background:var(--mb);color:var(--m);border-color:transparent}
+.bd.neg{background:var(--rb);color:var(--r);border-color:transparent}
+.pick{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd)}
+.pick:last-of-type{border-bottom:0}
+.pick .p{font-family:"Barlow Condensed","Arial Narrow",sans-serif;font-size:24px;font-weight:700;color:var(--ac)}
+.links{display:flex;flex-wrap:wrap;gap:6px}
+.links a{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--bd);border-radius:12px;background:var(--gl);color:var(--tx);text-decoration:none;font-weight:700;font-size:14px}
+.links a button{border:0;background:none;color:var(--r);font-size:15px;cursor:pointer;padding:0 0 0 4px}
+.err{color:var(--r);font-size:13px;margin:6px 0 0}
+.hbar{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;margin-bottom:8px}
+.hbar .btn.s{padding:5px 9px}
+.card.k1{border-top:4px solid var(--ac)}.card.k2{border-top:4px solid var(--a2)}.card.k3{border-top:4px solid var(--m)}.card.k4{border-top:4px solid var(--r)}.card.k5{border-top:4px solid var(--bl)}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:6px}
+.gal button{padding:0;border:1px solid var(--bd);border-radius:12px;overflow:hidden;aspect-ratio:1;background:var(--gl);cursor:pointer}
+.gal img{width:100%;height:100%;object-fit:cover;display:block}
+.emb{width:100%;border:0;border-radius:12px;aspect-ratio:16/9;background:var(--gl)}
+.emb.sp{aspect-ratio:auto;height:152px}
+.emb.sp.g{height:352px}
+.cnt{display:flex;align-items:center;justify-content:center;gap:12px}
+.cb{width:60px;height:60px;border-radius:18px;font-size:30px;padding:0}
+.res{display:flex;flex-direction:column;gap:6px;margin-top:6px;align-items:flex-start}
+.lbx{max-width:100%;max-height:68vh;border-radius:12px;object-fit:contain}
+.ok{color:var(--g);font-size:13px;margin:6px 0 0}
+a.mas{color:var(--ac);font-weight:800;text-decoration:none;font-size:13px}
+.ns{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.nc{display:block;width:100%;text-align:left;font:inherit;color:var(--tx);border:1px solid var(--bd);border-left:5px solid var(--nc,var(--bd));border-radius:12px;padding:10px;background:var(--gl);cursor:pointer;min-height:92px}
+.nc b{display:block;overflow-wrap:anywhere;margin-bottom:3px}
+.nc span{display:block;color:var(--mu);font-size:13px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow-wrap:anywhere;white-space:pre-line}
+.nc small{display:block;margin-top:6px;color:var(--mu);font-size:11px}
+.c1{--nc:var(--ac)}.c2{--nc:var(--a2)}.c3{--nc:var(--m)}.c4{--nc:var(--r)}.c5{--nc:var(--bl)}
+.modal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--cd);width:100%;max-width:680px;max-height:94vh;border-radius:20px 20px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;overflow:auto;border:1px solid var(--bd)}
+@media(min-width:700px){.modal{align-items:center}.sheet{border-radius:20px}}
+.sws{display:flex;gap:6px}
+.sw{width:30px;height:30px;border-radius:50%;border:2px solid var(--bd);background:var(--nc,transparent);cursor:pointer;padding:0}
+.sw.on{outline:3px solid var(--tx);outline-offset:1px}
+.dots{display:flex;gap:6px;margin:10px 0}
+.dots span{flex:1;text-align:center;font-size:12px;font-weight:800;padding:6px 0;border:1px solid var(--bd);border-radius:10px;color:var(--mu)}
+.dots span.on{background:var(--ac);border-color:var(--ac);color:var(--on)}
+footer{margin-top:20px;padding-top:12px;border-top:1px solid var(--bd)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header class="w">
+<div class="top"><a href="index.html" class="on">Panel</a><a href="parley.html">Mesa de parley</a><a href="quiniela.html">Quiniela</a><span class="sp"></span><button type="button" id="th" aria-label="Cambiar tema">🌓</button></div>
+<h1 id="hola">Mi <b>panel</b></h1>
+<div class="row" style="justify-content:space-between;gap:8px;flex-wrap:wrap"><p class="mu" id="fecha"></p><button type="button" id="pz" class="pzb" aria-label="Personalizar el panel">⚙️ Personalizar</button></div>
+</header>
+<main class="w">
+
+<section class="card solo" id="cuenta" hidden></section>
+
+<section class="card solo" id="pers" hidden>
+<h2>Personalizar</h2>
+<p class="mu">Elige qué widgets ver. Arriba de cada widget aparecen botones para subirlo (↑), bajarlo (↓), cambiar su ancho (↔), darle color (🎨) y ocultarlo o eliminarlo. Si tienes cuenta, todo se sincroniza.</p>
+<div class="ch" id="ptog" style="margin-top:8px"></div>
+<h3>Añadir un widget</h3>
+<div class="f1">
+<label>Tipo<select id="wk">
+<option value="cd">⏳ Cuenta regresiva (días para una fecha)</option>
+<option value="ls">📝 Lista propia (compras, películas…)</option>
+<option value="hb">🔥 Hábito diario (con racha)</option>
+<option value="gl">🖼️ Galería de imágenes</option>
+<option value="lk">🔗 Enlaces (web, correo, teléfono, WhatsApp…)</option>
+<option value="vd">▶️ Video o música (YouTube, Spotify)</option>
+<option value="ct">🔢 Contador (con meta)</option>
+<option value="fx">💱 Conversor de moneda</option>
+<option value="cl">🌤️ Clima de otra ciudad</option>
+<option value="tm">⏱️ Temporizador</option>
+</select></label>
+<label id="wnl">Nombre<input type="text" id="wn" maxlength="30" placeholder="Ej.: Navidad, Compras, Leer 10 minutos"></label>
+<label data-t="cd">Fecha<input type="date" id="wf"></label>
+<label data-t="vd" hidden>Enlace del video o la música<input type="text" id="wu" placeholder="https://youtu.be/… o https://open.spotify.com/…" autocapitalize="off"></label>
+<div class="fx" data-t="ct" hidden><label>Paso (cuánto suma cada toque)<input type="number" id="ws" value="1" min="1"></label><label>Meta (opcional)<input type="number" id="wg" min="0" placeholder="Ej.: 8"></label></div>
+<div class="fx" data-t="fx" hidden><label>De<select id="fxa"></select></label><label>A<select id="fxb"></select></label></div>
+<label data-t="tm" hidden>Minutos<input type="number" id="wmin" value="25" min="1" max="600"></label>
+<div data-t="cl" hidden><button type="button" class="btn o s" id="wbus">Buscar ciudad</button><div class="res" id="wres"></div></div>
+<div><button type="button" class="btn" id="wa">Añadir widget</button></div>
+<p class="err" id="werr"></p>
+</div>
+</section>
+
+<div class="grid" id="grid">
+
+<section class="card" id="clima"><div id="clima-c"><h2>Clima</h2><p class="mu">Cargando…</p></div></section>
+
+<section class="card" id="cambio"><div id="cambio-c"><h2>Dólar a lempiras</h2><p class="mu">Cargando…</p></div></section>
+
+<section class="card" id="w-pendientes">
+<h2>Pendientes</h2>
+<div class="comp">
+<div class="add"><input type="text" id="ti" placeholder="Nuevo pendiente" maxlength="120"><button type="button" class="btn" id="ta" aria-label="Añadir">＋</button></div>
+<div class="l2"><select id="tp" aria-label="Prioridad"><option value="0">⚪ Normal</option><option value="1">🟡 Media</option><option value="2">🔴 Alta</option></select><input type="date" id="tf" aria-label="Fecha límite"></div>
+</div>
+<div class="ch" id="tfl"></div>
+<div id="tbar"></div>
+<div id="tl"></div>
+<div class="row" style="justify-content:flex-end;margin-top:8px"><button type="button" class="btn o s" id="tb">Borrar hechos</button></div>
+</section>
+
+<section class="card" id="w-notas">
+<div class="row" style="justify-content:space-between"><h2 style="margin:0">Notas</h2><button type="button" class="btn s" id="nn">＋ Nueva</button></div>
+<input type="text" id="nq" placeholder="Buscar en tus notas" style="margin:10px 0" autocomplete="off">
+<div class="ns" id="nl"></div>
+</section>
+
+<section class="card full" id="w-parley">
+<h2>Hoy en la Mesa de parley</h2>
+<div id="pk"></div>
+</section>
+
+<section class="card full" id="w-accesos">
+<div class="row" style="justify-content:space-between"><h2 style="margin:0">Accesos rápidos</h2><button type="button" class="btn o s" id="edl">Editar</button></div>
+<div class="links" id="lk" style="margin-top:10px"></div>
+<div id="lform" hidden style="margin-top:10px">
+<div class="add"><input type="text" id="ln" placeholder="Nombre" maxlength="20"><input type="text" id="lu" placeholder="Dirección (https://…)" inputmode="url" autocapitalize="off"></div>
+<button type="button" class="btn s" id="la">Añadir acceso</button>
+<p class="err" id="lerr"></p>
+</div>
+</section>
+
+<div id="custom" style="display:contents"></div>
+
+</div>
+</main>
+<footer class="w">
+<p class="mu">El clima viene de Open-Meteo y el tipo de cambio es un dato de mercado de referencia: tu banco o casa de cambio puede cobrar distinto. Sin cuenta, tus datos se guardan solo en este dispositivo. Con cuenta se sincronizan entre tus dispositivos y solo tú los ves. Al salir de tu cuenta se borran de este dispositivo (siguen guardados en tu cuenta).</p>
+</footer>
+
+<div class="modal" id="nm" hidden>
+<div class="sheet" role="dialog" aria-modal="true" aria-label="Editar nota">
+<input type="text" id="nti" placeholder="Título" maxlength="60">
+<textarea id="ntx" placeholder="Escribe aquí…"></textarea>
+<div class="gal" id="nim"></div>
+<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><label class="btn o s" style="display:inline-block">📷 Añadir imagen<input type="file" accept="image/*" id="nfi" hidden></label><span class="err" id="nier" style="margin:0"></span></div>
+<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px">
+<div class="sws" id="nsw"></div>
+<div class="row" style="gap:6px"><button type="button" class="btn o s" id="npn">📌 Fijar</button><button type="button" class="btn d s" id="nde">Borrar</button></div>
+</div>
+<button type="button" class="btn" id="nok">Listo</button>
+</div>
+</div>
+
+
+<div class="modal" id="lb" hidden>
+<div class="sheet" style="align-items:center" role="dialog" aria-modal="true" aria-label="Imagen">
+<img id="lbi" class="lbx" alt="Imagen ampliada">
+<p class="mu" id="lbt"></p>
+<div class="row" style="gap:6px;flex-wrap:wrap;justify-content:center"><button type="button" class="btn o s" id="lbp" aria-label="Anterior">←</button><button type="button" class="btn o s" id="lbn" aria-label="Siguiente">→</button><button type="button" class="btn d s" id="lbd">Borrar</button><button type="button" class="btn s" id="lbc">Cerrar</button></div>
+</div>
+</div>
+<script src="config.js"></script>
+<script src="auth.js"></script>
+<script src="data.js"></script>
+<script>
+const LS={get(k,d){try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+
+/* ---- Ajustes que puedes cambiar ---- */
+const CIUDAD={nombre:"San Pedro Sula",lat:15.5042,lon:-88.025};
+const TZ="America/Tegucigalpa";
+const ACCESOS=[
+  {n:"Mesa de parley",u:"parley.html",e:"📊"},
+  {n:"Quiniela",u:"quiniela.html",e:"🏆"},
+  {n:"GitHub",u:"https://github.com/RalzGT/Ralz-Parleys",e:"🐙"},
+  {n:"Robot (Actions)",u:"https://github.com/RalzGT/Ralz-Parleys/actions",e:"🤖"},
+  {n:"Supabase",u:"https://supabase.com/dashboard",e:"🗄️"}
+];
+
+const fDia=new Intl.DateTimeFormat("es",{timeZone:TZ,weekday:"long",day:"numeric",month:"long"});
+const fHora=new Intl.DateTimeFormat("es",{timeZone:TZ,hour:"numeric",minute:"2-digit",hour12:true});
+const fSem=new Intl.DateTimeFormat("es",{timeZone:TZ,weekday:"short"});
+const fHr24=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,hour:"2-digit",hour12:false});
+const fKey=new Intl.DateTimeFormat("en-CA",{timeZone:TZ});
+const fCorta=new Intl.DateTimeFormat("es",{timeZone:TZ,day:"numeric",month:"short"});
+
+/* ---- Fechas (Honduras) ---- */
+const hoyStr=()=>fKey.format(new Date());
+const partes=s=>{const[y,m,d]=s.split("-").map(Number);return Date.UTC(y,m-1,d)};
+const diasEntre=(a,b)=>Math.round((partes(b)-partes(a))/864e5);
+const diaMenos=(s,n)=>new Date(partes(s)-n*864e5).toISOString().slice(0,10);
+const fechaLarga=s=>new Date(s+"T12:00:00-06:00");
+const FECHA_OK=/^\d{4}-\d{2}-\d{2}$/;
+
+/* ---- Tema ---- */
+$("th").addEventListener("click",()=>{
+  const c=document.documentElement.dataset.theme==="light"?"dark":"light";
+  document.documentElement.dataset.theme=c;LS.set("mp-th",c);
+});
+
+/* ---- Datos de internet con respaldo guardado ---- */
+async function traer(urls){
+  let ult;
+  for(const u of urls){
+    try{const r=await fetch(u);if(r.ok)return await r.json();ult=new Error("HTTP "+r.status)}catch(e){ult=e}
+  }
+  throw ult||new Error("sin conexión");
+}
+const hace=ts=>{const m=Math.round((Date.now()-ts)/60000);return m<60?"hace "+Math.max(m,1)+" min":m<1440?"hace "+Math.round(m/60)+" h":"hace "+Math.round(m/1440)+" d"};
+
+/* ---- Clima ---- */
+const WMO={0:["☀️","Despejado"],1:["🌤️","Mayormente despejado"],2:["⛅","Parcialmente nublado"],3:["☁️","Nublado"],45:["🌫️","Niebla"],48:["🌫️","Niebla"],51:["🌦️","Llovizna ligera"],53:["🌦️","Llovizna"],55:["🌧️","Llovizna fuerte"],56:["🌧️","Llovizna helada"],57:["🌧️","Llovizna helada"],61:["🌧️","Lluvia ligera"],63:["🌧️","Lluvia"],65:["🌧️","Lluvia fuerte"],66:["🌧️","Lluvia helada"],67:["🌧️","Lluvia helada"],71:["🌨️","Nieve ligera"],73:["🌨️","Nieve"],75:["🌨️","Nieve fuerte"],77:["🌨️","Nieve"],80:["🌦️","Chubascos ligeros"],81:["🌧️","Chubascos"],82:["⛈️","Chubascos fuertes"],85:["🌨️","Chubascos de nieve"],86:["🌨️","Chubascos de nieve"],95:["⛈️","Tormenta"],96:["⛈️","Tormenta con granizo"],99:["⛈️","Tormenta con granizo"]};
+const wmo=c=>WMO[c]||["🌡️","—"];
+function climaCuerpo(d,ts,viejo){
+  const c=d.current,dy=d.daily,[e,t]=wmo(c.weather_code);
+  let dias="";
+  for(let i=1;i<Math.min(4,dy.time.length);i++){
+    const f=new Date(dy.time[i]+"T12:00:00-06:00"),[ee]=wmo(dy.weather_code[i]);
+    dias+=`<div><b>${esc(cap(fSem.format(f)))}</b>${ee} ${Math.round(dy.temperature_2m_max[i])}° / ${Math.round(dy.temperature_2m_min[i])}°<br><span class="mu">☔ ${dy.precipitation_probability_max[i]??0}%</span></div>`;
+  }
+  return`<div class="row"><span class="emo">${e}</span><span class="big">${Math.round(c.temperature_2m)}°</span><div><b>${esc(t)}</b><p class="mu">Sensación ${Math.round(c.apparent_temperature)}° · Humedad ${Math.round(c.relative_humidity_2m)}%<br>Hoy: ${Math.round(dy.temperature_2m_max[0])}° / ${Math.round(dy.temperature_2m_min[0])}° · ☔ ${dy.precipitation_probability_max[0]??0}%</p></div></div><div class="dias">${dias}</div>${viejo?`<p class="err">Sin conexión: dato de ${hace(ts)}.</p>`:""}`;
+}
+function pintaClima(d,ts,viejo){$("clima-c").innerHTML=`<h2>Clima · ${esc(CIUDAD.nombre)}</h2>`+climaCuerpo(d,ts,viejo)}
+const urlClima=(lat,lon,tz)=>"https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lon+"&current=temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone="+encodeURIComponent(tz)+"&forecast_days=4";
+async function clima(){
+  try{
+    const d=await traer([urlClima(CIUDAD.lat,CIUDAD.lon,TZ)]);LS.set("pn-clima",{ts:Date.now(),d});pintaClima(d,Date.now(),false);
+  }catch(e){
+    const g=LS.get("pn-clima",null);
+    if(g)pintaClima(g.d,g.ts,true);else $("clima-c").innerHTML="<h2>Clima</h2><p class=\"err\">No pude cargar el clima. Revisa tu conexión.</p>";
+  }
+}
+
+/* ---- Tipo de cambio ---- */
+const FXLIST=[["usd","USD · Dólar"],["hnl","HNL · Lempira"],["eur","EUR · Euro"],["mxn","MXN · Peso mexicano"],["gtq","GTQ · Quetzal"],["crc","CRC · Colón costarricense"],["nio","NIO · Córdoba"],["pab","PAB · Balboa"],["cop","COP · Peso colombiano"],["pen","PEN · Sol peruano"],["brl","BRL · Real"],["ars","ARS · Peso argentino"],["clp","CLP · Peso chileno"],["cad","CAD · Dólar canadiense"],["gbp","GBP · Libra esterlina"]];
+let FXD=null,TASA=0;
+function guardaFx(usd,f,ts){const r={};FXLIST.forEach(([c])=>{if(c!=="usd"&&usd&&usd[c])r[c]=usd[c]});FXD={usd:r,f};LS.set("pn-fxall",{ts,usd:r,f})}
+function pintaCambio(tasa,fecha,ts,viejo){
+  TASA=tasa;
+  $("cambio-c").innerHTML=`<h2>Dólar a lempiras</h2><div class="row"><span class="big">L ${tasa.toFixed(2)}</span><p class="mu">por cada US$ 1<br>Dato del ${esc(fecha)}</p></div><div class="fx"><label>Dólares (USD)<input type="number" id="fu" inputmode="decimal" value="1" min="0" step="any"></label><label>Lempiras (HNL)<input type="number" id="fl" inputmode="decimal" value="${tasa.toFixed(2)}" min="0" step="any"></label></div>${viejo?`<p class="err">Sin conexión: dato de ${hace(ts)}.</p>`:""}`;
+  $("fu").addEventListener("input",()=>{const v=parseFloat($("fu").value);$("fl").value=isNaN(v)?"":(v*TASA).toFixed(2)});
+  $("fl").addEventListener("input",()=>{const v=parseFloat($("fl").value);$("fu").value=isNaN(v)?"":(v/TASA).toFixed(2)});
+}
+async function cambio(){
+  const urls=["https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.min.json","https://latest.currency-api.pages.dev/v1/currencies/usd.min.json"];
+  try{
+    const d=await traer(urls),t=d&&d.usd&&d.usd.hnl;
+    if(!t)throw new Error("sin dato");
+    LS.set("pn-fx",{ts:Date.now(),t,f:d.date});guardaFx(d.usd,d.date,Date.now());pintaCambio(t,d.date,Date.now(),false);
+  }catch(e){
+    const g=LS.get("pn-fx",null),a=LS.get("pn-fxall",null);
+    if(a)FXD={usd:a.usd,f:a.f};
+    if(g)pintaCambio(g.t,g.f,g.ts,true);else $("cambio-c").innerHTML="<h2>Dólar a lempiras</h2><p class=\"err\">No pude cargar el tipo de cambio. Revisa tu conexión.</p>";
+  }
+  if(typeof repintaFx==="function")repintaFx();
+}
+
+/* ---- Hoy en la Mesa de parley (usa data.js) ---- */
+function fechaDe(r){const y=SNAP.getUTCFullYear();let d=new Date(y+"-"+r[1]+":00Z");if(d-SNAP<-1.5e10)d=new Date((y+1)+"-"+r[1]+":00Z");return d}
+function parley(){
+  const box=$("pk");
+  if(typeof S==="undefined"){box.innerHTML="<p class=\"mu\">No pude leer los partidos.</p>";return}
+  const ahora=Date.now(),L=[];
+  for(const x in S){for(const r of S[x].D){
+    const d=fechaDe(r).getTime();if(d<ahora||d>ahora+864e5)continue;
+    const tres=x==="f",ps=tres?[r[4],r[5],r[6]]:[r[4],r[5]],nm=tres?["Gana "+r[2],"Empate","Gana "+r[3]]:["Gana "+r[2],"Gana "+r[3]];
+    let mi=0;ps.forEach((p,i)=>{if(p>ps[mi])mi=i});
+    L.push({d,t:r[2]+" vs "+r[3],o:nm[mi],p:ps[mi]});
+  }}
+  L.sort((a,b)=>b.p-a.p);
+  if(!L.length){box.innerHTML="<p class=\"mu\">No hay partidos en las próximas 24 horas.</p><a class=\"mas\" href=\"parley.html\">Abrir la Mesa de parley →</a>";return}
+  box.innerHTML="<p class=\"mu\" style=\"margin-bottom:6px\">Los 3 resultados más probables en las próximas 24 horas, según las cuotas del mercado. No son garantías.</p>"+
+    L.slice(0,3).map(m=>`<div class="pick"><div><b>${esc(m.o)}</b><p class="mu">${esc(m.t)} · ${esc(fHora.format(new Date(m.d)))}</p></div><span class="p">${Math.round(m.p)}%</span></div>`).join("")+
+    "<a class=\"mas\" href=\"parley.html\">Ver todos los partidos →</a> · <a class=\"mas\" href=\"quiniela.html\">Ir a la quiniela →</a>";
+}
+
+/* ---- Estado: todo se guarda con fechas para poder mezclarlo entre dispositivos ---- */
+const newId=()=>Date.now()*1000+Math.floor(Math.random()*1000);
+const BUILTIN=[["clima","Clima","clima"],["cambio","Dólar","cambio"],["pendientes","Pendientes","w-pendientes"],["notas","Notas","w-notas"],["parley","Mesa de parley","w-parley"],["accesos","Accesos","w-accesos"]];
+const KEYS=BUILTIN.map(b=>b[0]);
+const ANCHO0={clima:0,cambio:0,pendientes:0,notas:0,parley:1,accesos:1};
+const TIPOS={cd:1,ls:1,hb:1,gl:1,lk:1,vd:1,ct:1,fx:1,cl:1,tm:1};
+const ANCHO_T={gl:1,vd:1};
+const VACIO=()=>({todo:[],links:[],notas:[],widgets:[],imgs:[],aj:{},perfil:{n:"",u:0}});
+const canonT=t=>{const o={id:t.id,t:String(t.t||""),h:t.h?1:0,p:(t.p===1||t.p===2)?t.p:0,f:FECHA_OK.test(t.f||"")?t.f:"",l:+t.l||0,u:t.u||0};if(t.x)o.x=1;return o};
+const canonL=l=>{const o={id:l.id,n:String(l.n||""),url:String(l.url||""),u:l.u||0};if(l.e)o.e=String(l.e).slice(0,4);if(+l.g)o.g=+l.g;if(l.x)o.x=1;return o};
+const canonI=i=>{const o={id:i.id,g:String(i.g||""),u:i.u||0};if(i.x)o.x=1;return o};
+const canonN=n=>{const c=+n.c,o={id:n.id,ti:String(n.ti||""),t:String(n.t||""),c:c>=1&&c<=5?c:0,pin:n.pin?1:0,u:n.u||0};if(n.x)o.x=1;return o};
+const canonD=(k,d)=>{
+  d=d||{};
+  if(k==="cd")return{f:FECHA_OK.test(d.f||"")?d.f:""};
+  if(k==="hb")return{dias:[...new Set((d.dias||[]).filter(x=>FECHA_OK.test(x)))].sort().slice(-400)};
+  if(k==="vd")return{url:String(d.url||"").slice(0,500)};
+  if(k==="ct")return{v:Math.round(+d.v)||0,s:Math.max(1,Math.round(+d.s)||1),m:Math.max(0,Math.round(+d.m)||0)};
+  if(k==="fx")return{a:/^[a-z]{3}$/.test(d.a)?d.a:"usd",b:/^[a-z]{3}$/.test(d.b)?d.b:"hnl"};
+  if(k==="cl")return{n:String(d.n||"").slice(0,60),lat:+d.lat||0,lon:+d.lon||0};
+  if(k==="tm")return{m:Math.min(600,Math.max(1,Math.round(+d.m)||25))};
+  return{};
+};
+const canonW=w=>{const k=TIPOS[w.k]?w.k:"ls",o={id:w.id,k,n:String(w.n||""),d:canonD(k,w.d),u:w.u||0};if(+w.o)o.o=+w.o;if(w.w===0||w.w===1)o.w=w.w;if(+w.c>=1&&+w.c<=5)o.c=+w.c;if(w.x)o.x=1;return o};
+const canonAj=a=>{const o={v:a.v===0?0:1,u:a.u||0};if(+a.o)o.o=+a.o;if(a.w===0||a.w===1)o.w=a.w;if(+a.c>=1&&+a.c<=5)o.c=+a.c;return o};
+function normaliza(d){
+  d=d||{};const lim=Date.now()-60*864e5;
+  const lista=(a,f)=>(Array.isArray(a)?a:[]).filter(x=>x&&x.id!=null&&!(x.x&&(x.u||0)<lim)).map(f).sort((p,q)=>p.id-q.id);
+  const notas=lista(d.notas,canonN);
+  if(d.nota&&d.nota.t&&!notas.some(n=>n.id===1))notas.unshift(canonN({id:1,ti:"Notas",t:d.nota.t,u:d.nota.u||1}));
+  const aj={};KEYS.forEach(k=>{const a=d.aj&&d.aj[k];if(a&&typeof a==="object")aj[k]=canonAj(a)});
+  const p=d.perfil&&typeof d.perfil==="object"?{n:String(d.perfil.n||"").slice(0,20),u:d.perfil.u||0}:{n:"",u:0};
+  return{todo:lista(d.todo,canonT),links:lista(d.links,canonL),notas,widgets:lista(d.widgets,canonW),imgs:lista(d.imgs,canonI),aj,perfil:p};
+}
+function mezclaLista(a,b){const m=new Map();for(const it of a.concat(b)){const o=m.get(it.id);if(!o||it.u>o.u)m.set(it.id,it)}return[...m.values()]}
+function mezclar(l,r){
+  l=normaliza(l);r=normaliza(r);
+  const aj={};KEYS.forEach(k=>{const a=l.aj[k],b=r.aj[k],w=!a?b:!b?a:(b.u>a.u?b:a);if(w)aj[k]=w});
+  return normaliza({todo:mezclaLista(l.todo,r.todo),links:mezclaLista(l.links,r.links),notas:mezclaLista(l.notas,r.notas),widgets:mezclaLista(l.widgets,r.widgets),imgs:mezclaLista(l.imgs,r.imgs),aj,perfil:r.perfil.u>l.perfil.u?r.perfil:l.perfil});
+}
+function cargaLocal(){
+  const e=LS.get("pn-estado",null);if(e)return normaliza(e);
+  // Viene de la primera versión (sin cuenta): se conserva lo que ya tenías
+  const ahora=Date.now(),t=LS.get("pn-todo",[]),l=LS.get("pn-links",[]),n=LS.get("pn-notas","");
+  const o=VACIO();
+  t.forEach((x,i)=>o.todo.push({id:newId()+i,t:x.t,h:x.h?1:0,u:ahora}));
+  l.forEach((x,i)=>o.links.push({id:newId()+i,n:x.n,url:x.u,u:ahora}));
+  if(n)o.nota={t:n,u:ahora};
+  return normaliza(o);
+}
+let E=cargaLocal();
+const guardaLocal=()=>LS.set("pn-estado",E);
+function guardar(){guardaLocal();programaSync()}
+const visible=k=>!(E.aj[k]&&E.aj[k].v===0);
+const anchoB=k=>{const a=E.aj[k];return a&&a.w!=null?a.w:ANCHO0[k]};
+const anchoW=w=>w.w!=null?w.w:(ANCHO_T[w.k]||0);
+function elementos(){
+  const L=[];
+  BUILTIN.forEach(([k],i)=>{const a=E.aj[k];L.push({t:"b",k,o:a&&a.o?a.o:(i+1)*10})});
+  E.widgets.filter(w=>!w.x).forEach((w,i)=>L.push({t:"w",k:String(w.id),o:w.o?w.o:1000+i}));
+  return L.sort((a,b)=>a.o-b.o);
+}
+
+/* ---- Saludo y fecha ---- */
+function cabecera(){
+  const h=+fHr24.format(new Date()),s=Cuenta.ses;
+  const nombre=s?(s.nombre||String(s.user.email||"").split("@")[0]):"";
+  const sal=h<12?"Buenos días":h<19?"Buenas tardes":"Buenas noches";
+  $("hola").innerHTML=nombre?esc(sal)+", <b>"+esc(nombre)+"</b>":"Mi <b>panel</b>";
+  $("fecha").textContent=cap(fDia.format(new Date()))+" · "+fHora.format(new Date())+" (hora de Honduras)";
+}
+
+/* ---- Cuenta (la misma de la quiniela) y sincronización ---- */
+const NUBE=Cuenta.nube;
+let syTxt="",syErr=false,sincronizando=false,pendienteSync=false,tSync;
+const SES=()=>Cuenta.ses;
+function estadoSync(txt,err){syTxt=txt;syErr=!!err;const e=$("sy");if(e){e.textContent=txt;e.className=err?"err":"ok"}}
+function programaSync(){if(!SES()||!NUBE)return;clearTimeout(tSync);tSync=setTimeout(sincronizar,700)}
+function repinta(){
+  aplicaVista();pintaTray();accesos();
+  if(!editT)pintaTodo();
+  if(!$("custom").contains(document.activeElement))pintaCustom();
+  pintaNotas();cabecera();
+}
+async function sincronizar(){
+  const s=SES();
+  if(!s||!NUBE)return;
+  if(sincronizando){pendienteSync=true;return}
+  sincronizando=true;estadoSync("Sincronizando…",false);
+  try{
+    const filas=await Cuenta.rest("panel?select=datos&user_id=eq."+encodeURIComponent(s.user.id));
+    const remoto=normaliza(filas&&filas[0]?filas[0].datos:null);
+    const mezcla=mezclar(E,remoto);
+    const cambioLocal=JSON.stringify(mezcla)!==JSON.stringify(normaliza(E));
+    E=mezcla;guardaLocal();
+    if(cambioLocal)repinta();
+    if(JSON.stringify(mezcla)!==JSON.stringify(remoto)){
+      await Cuenta.rest("panel?on_conflict=user_id",{method:"POST",headers:{Prefer:"resolution=merge-duplicates,return=minimal"},body:JSON.stringify([{user_id:s.user.id,datos:E,actualizado:new Date().toISOString()}])});
+    }
+    estadoSync("Sincronizado ✓ "+fHora.format(new Date()),false);
+  }catch(e){estadoSync("No pude sincronizar ("+String(e.message).slice(0,70)+")",true)}
+  finally{sincronizando=false;if(pendienteSync){pendienteSync=false;programaSync()}}
+}
+function pintaCuenta(){
+  const c=$("cuenta");if(!NUBE){c.hidden=true;return}
+  c.hidden=false;const s=SES();
+  if(!s){
+    c.innerHTML=`<h2>Tu cuenta</h2><p class="mu">Crea tu cuenta para que tus pendientes, notas y widgets se sincronicen entre tus dispositivos, y para jugar en la quiniela con tus amigos. Es la misma cuenta para todo y nadie más ve tus datos.</p><div class="f1"><label>Tu nombre (solo para crear la cuenta)<input type="text" id="cn" maxlength="20" autocomplete="given-name"></label><div class="fx"><label>Correo<input type="text" id="ce" inputmode="email" autocapitalize="off" autocomplete="email"></label><label>Contraseña (mínimo 6)<input type="password" id="cp" autocomplete="current-password"></label></div></div><div class="row" style="margin-top:10px;gap:8px"><button type="button" class="btn" id="cin">Entrar</button><button type="button" class="btn o" id="ccr">Crear cuenta</button></div><p class="err" id="cerr"></p>`;
+    return;
+  }
+  const nombre=s.nombre;
+  c.innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><div><b>👤 ${esc(nombre||s.user.email)}</b><p class="mu">${nombre?esc(s.user.email)+" · ":""}<span id="sy" class="${syErr?"err":"ok"}">${esc(syTxt)}</span></p></div><div class="row" style="gap:6px"><button type="button" class="btn o s" id="csy">Sincronizar</button><button type="button" class="btn o s" id="cout">Salir</button></div></div>`+
+    (nombre?"":`<div class="add" style="margin-top:10px"><input type="text" id="pn" maxlength="20" placeholder="¿Cómo te llamas?"><button type="button" class="btn s" id="pns">Guardar nombre</button></div><p class="mu">Solo se pone una vez. Así te verán tus amigos en la quiniela.</p>`)+`<p class="err" id="cerr"></p>`;
+}
+async function entrarCuenta(nuevo){
+  const nom=$("cn").value.trim().replace(/\s+/g," "),em=$("ce").value.trim().toLowerCase(),pw=$("cp").value,er=$("cerr");er.textContent="";
+  if(nuevo&&nom.length<2){er.textContent="Escribe tu nombre (mínimo 2 letras) para crear la cuenta.";return}
+  if(!/^\S+@\S+\.\S+$/.test(em)){er.textContent="Escribe un correo válido.";return}
+  if(pw.length<6){er.textContent="La contraseña debe tener al menos 6 caracteres.";return}
+  $("cin").disabled=$("ccr").disabled=true;
+  try{
+    if(nuevo){if(await Cuenta.crear(em,pw,nom)==="confirmar"){er.textContent="Cuenta creada. Revisa tu correo para confirmarla y luego pulsa «Entrar».";return}}
+    else await Cuenta.entrar(em,pw);
+    syTxt="";pintaCuenta();cabecera();await sincronizar();
+  }catch(e){er.textContent=Cuenta.msgErr(e)}
+  finally{if($("cin")){$("cin").disabled=false;$("ccr").disabled=false}}
+}
+async function salirCuenta(){
+  clearTimeout(tSync);await sincronizar();
+  if(syErr&&!confirm("No pude subir tus últimos cambios. Si sales ahora se pierden. ¿Salir de todos modos?"))return;
+  await Cuenta.salir();
+  E=VACIO();syTxt="";syErr=false;notaAbierta=0;$("nm").hidden=true;document.body.style.overflow="";
+  pintaCuenta();repinta();
+}
+$("cuenta").addEventListener("click",async e=>{
+  const id=e.target.id;
+  if(id==="cin")entrarCuenta(false);else if(id==="ccr")entrarCuenta(true);
+  else if(id==="csy")sincronizar();else if(id==="cout")salirCuenta();
+  else if(id==="pns"){
+    const er=$("cerr");er.textContent="";
+    try{await Cuenta.ponNombre($("pn").value)}
+    catch(x){er.textContent=String(x.message).startsWith("Escribe")?x.message:"No pude guardar tu nombre ("+String(x.message).slice(0,80)+")"}
+  }
+});
+$("cuenta").addEventListener("keydown",e=>{
+  if(e.key!=="Enter")return;
+  if(e.target.id==="cp"||e.target.id==="ce")entrarCuenta(false);
+  else if(e.target.id==="pn")$("pns").click();
+});
+Cuenta.alCambiar(()=>{pintaCuenta();cabecera()});
+
+/* ---- Personalizar: orden, tamaño, color y widgets propios ---- */
+let edit=false;
+const entrada=(t,k)=>t==="b"?(E.aj[k]||(E.aj[k]={v:1,u:0})):E.widgets.find(w=>String(w.id)===String(k));
+function aplicaVista(){
+  const L=elementos();
+  BUILTIN.forEach(([k,n,id])=>{
+    const el=$(id),a=E.aj[k];
+    el.hidden=!visible(k);el.classList.toggle("full",!!anchoB(k));
+    [1,2,3,4,5].forEach(i=>el.classList.toggle("k"+i,!!(a&&a.c===i)));
+    el.style.order=L.findIndex(x=>x.t==="b"&&x.k===k);
+  });
+}
+function pintaTray(){
+  $("ptog").innerHTML=BUILTIN.map(([k,n])=>`<button type="button" data-tg="${k}" class="${visible(k)?"on":""}">${visible(k)?"✓ ":""}${esc(n)}</button>`).join("");
+}
+function toca(t,k,fn){const e=entrada(t,k);if(!e)return;fn(e);e.u=Date.now();guardar();aplicaVista();pintaCustom();pintaTray()}
+function mover(t,k,dir){
+  const L=elementos(),i=L.findIndex(x=>x.t===t&&x.k===String(k)),j=i+dir;
+  if(i<0||j<0||j>=L.length)return;
+  [L[i],L[j]]=[L[j],L[i]];const u=Date.now();
+  L.forEach((x,n)=>{const o=(n+1)*10,e=entrada(x.t,x.k);if(e&&e.o!==o){e.o=o;e.u=u}});
+  guardar();aplicaVista();pintaCustom();
+}
+const botonesBarra=(t,k)=>`<button type="button" class="btn o s" data-ac="up" data-t="${t}" data-k="${k}" aria-label="Subir">↑</button><button type="button" class="btn o s" data-ac="down" data-t="${t}" data-k="${k}" aria-label="Bajar">↓</button><button type="button" class="btn o s" data-ac="ancho" data-t="${t}" data-k="${k}" aria-label="Cambiar ancho">↔</button><button type="button" class="btn o s" data-ac="color" data-t="${t}" data-k="${k}" aria-label="Cambiar color">🎨</button>`;
+function iniciaHbars(){
+  BUILTIN.forEach(([k,n,id])=>{const sec=$(id);if(!sec.querySelector(".hbar"))sec.insertAdjacentHTML("afterbegin",`<div class="hbar" hidden>${botonesBarra("b",k)}<button type="button" class="btn d s" data-ac="ocultar" data-t="b" data-k="${k}">Ocultar</button></div>`)});
+}
+function pintaHbars(){document.querySelectorAll(".hbar").forEach(h=>{h.hidden=!edit})}
+function borraWidget(w){
+  const ahora=Date.now();w.x=1;w.u=ahora;w.n="";w.d={};
+  E.todo.forEach(t=>{if(t.l===w.id&&!t.x){t.x=1;t.u=ahora;t.t=""}});
+  E.links.forEach(l=>{if(l.g===w.id&&!l.x){l.x=1;l.u=ahora;l.n="";l.url=""}});
+  E.imgs.forEach(i=>{if(i.g==="w"+w.id&&!i.x){i.x=1;i.u=ahora;borraImgRemota(i.id)}});
+  guardar();aplicaVista();pintaCustom();
+}
+$("grid").addEventListener("click",e=>{
+  const b=e.target.closest("[data-ac]");if(!b)return;
+  const ac=b.dataset.ac,t=b.dataset.t,k=b.dataset.k;
+  if(ac==="up")mover(t,k,-1);
+  else if(ac==="down")mover(t,k,1);
+  else if(ac==="ancho")toca(t,k,x=>{x.w=(t==="b"?anchoB(k):anchoW(x))?0:1});
+  else if(ac==="color")toca(t,k,x=>{x.c=((x.c||0)+1)%6});
+  else if(ac==="ocultar")toca("b",k,x=>{x.v=0});
+  else if(ac==="ren"){const w=entrada("w",k);if(!w)return;const n=prompt("Nombre del widget",w.n);if(n&&n.trim())toca("w",k,x=>{x.n=n.trim().slice(0,30)})}
+  else if(ac==="del"){const w=entrada("w",k);if(w&&confirm("¿Eliminar «"+w.n+"»?"))borraWidget(w)}
+});
+$("pz").addEventListener("click",()=>{edit=!edit;$("pers").hidden=!edit;$("pz").classList.toggle("on",edit);$("pz").textContent=edit?"✓ Listo":"⚙️ Personalizar";pintaHbars();pintaCustom();if(edit)$("pers").scrollIntoView({block:"nearest"})});
+$("ptog").addEventListener("click",e=>{
+  const b=e.target.closest("[data-tg]");if(!b)return;
+  const k=b.dataset.tg,v=visible(k)?0:1;toca("b",k,x=>{x.v=v});
+});
+
+/* ---- Crear widgets ---- */
+function ajustaForm(){
+  const k=$("wk").value;
+  document.querySelectorAll("#pers [data-t]").forEach(el=>{el.hidden=!el.dataset.t.split(" ").includes(k)});
+  $("wa").hidden=k==="cl";$("wres").innerHTML="";$("werr").textContent="";
+  $("wnl").firstChild.textContent=k==="cl"?"Ciudad (escribe y pulsa Buscar)":"Nombre";
+}
+$("wk").addEventListener("change",ajustaForm);
+$("wa").addEventListener("click",()=>{
+  const k=$("wk").value,er=$("werr");er.textContent="";let n=$("wn").value.trim(),d={};
+  if(k==="cd"){const f=$("wf").value;if(!FECHA_OK.test(f)){er.textContent="Elige una fecha.";return}d={f}}
+  else if(k==="hb")d={dias:[]};
+  else if(k==="vd"){
+    const u=normalizaUrl($("wu").value);
+    if(!u||!/^https?:/i.test(u)){er.textContent="Pega un enlace de YouTube, Spotify u otra página (https://…).";return}
+    d={url:u};if(!n){const m=embedDe(u);n=m?(m.tipo==="yt"?"Video":"Música"):"Enlace"}
+  }
+  else if(k==="ct")d={v:0,s:Math.max(1,Math.round(+$("ws").value)||1),m:Math.max(0,Math.round(+$("wg").value)||0)};
+  else if(k==="fx")d={a:$("fxa").value,b:$("fxb").value};
+  else if(k==="tm")d={m:Math.min(600,Math.max(1,Math.round(+$("wmin").value)||25))};
+  else if(k==="gl"&&!n)n="Galería";
+  if(!n){er.textContent="Ponle un nombre al widget.";return}
+  E.widgets.push({id:newId(),k,n:n.slice(0,30),d,u:Date.now()});
+  guardar();$("wn").value="";$("wf").value="";$("wu").value="";pintaCustom();
+});
+async function buscaCiudad(){
+  const q=$("wn").value.trim(),box=$("wres");box.innerHTML="";$("werr").textContent="";
+  if(q.length<2){$("werr").textContent="Escribe el nombre de la ciudad.";return}
+  try{
+    const r=await traer(["https://geocoding-api.open-meteo.com/v1/search?name="+encodeURIComponent(q)+"&count=5&language=es&format=json"]);
+    const L=(r&&r.results)||[];
+    box.innerHTML=L.length?L.map(c=>`<button type="button" class="btn o s" data-cc="${esc(JSON.stringify({n:c.name,lat:c.latitude,lon:c.longitude}))}">${esc(c.name)}${c.admin1?", "+esc(c.admin1):""} · ${esc(c.country||"")}</button>`).join(""):`<p class="mu">No encontré esa ciudad.</p>`;
+  }catch(e){box.innerHTML=`<p class="err">No pude buscar. Revisa tu conexión.</p>`}
+}
+$("wbus").addEventListener("click",buscaCiudad);
+$("wn").addEventListener("keydown",e=>{if(e.key==="Enter"&&$("wk").value==="cl"){e.preventDefault();buscaCiudad()}});
+$("wres").addEventListener("click",e=>{
+  const b=e.target.closest("[data-cc]");if(!b)return;
+  const c=JSON.parse(b.dataset.cc);
+  E.widgets.push({id:newId(),k:"cl",n:String(c.n).slice(0,30),d:{n:c.n,lat:c.lat,lon:c.lon},u:Date.now()});
+  guardar();$("wres").innerHTML="";$("wn").value="";pintaCustom();
+});
+
+/* ---- Enlaces de cualquier tipo ---- */
+const BLOQUEADOS=/^(javascript|data|vbscript|file|blob|about)$/i;
+function normalizaUrl(s){
+  s=String(s||"").trim();if(!s||s.length>500)return null;
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))return"mailto:"+s;
+  if(/^\+?[\d\s().-]{7,}$/.test(s))return"tel:"+s.replace(/[^\d+]/g,"");
+  if(!/^[a-z][a-z0-9+.-]*:/i.test(s))s="https://"+s;
+  const m=s.match(/^([a-z][a-z0-9+.-]*):/i);
+  if(!m||BLOQUEADOS.test(m[1]))return null;
+  if(/^https?:/i.test(s)){try{return new URL(s).href}catch(e){return null}}
+  return s;
+}
+function iconoLink(l){
+  if(l.e)return l.e;
+  const u=String(l.url).toLowerCase();
+  if(u.startsWith("mailto:"))return"✉️";
+  if(u.startsWith("tel:"))return"📞";
+  if(u.startsWith("sms:"))return"💬";
+  if(u.startsWith("whatsapp:")||u.includes("wa.me/")||u.includes("whatsapp.com"))return"💬";
+  if(u.includes("youtu.be")||u.includes("youtube.com"))return"▶️";
+  if(u.startsWith("spotify:")||u.includes("spotify.com"))return"🎵";
+  if(u.startsWith("geo:")||u.includes("maps.google")||u.includes("goo.gl/maps")||u.includes("maps.app.goo.gl")||u.includes("google.com/maps"))return"📍";
+  if(u.includes("instagram.com"))return"📷";
+  if(u.includes("facebook.com")||u.includes("fb.com"))return"👥";
+  if(u.includes("x.com")||u.includes("twitter.com"))return"🐦";
+  if(u.includes("tiktok.com"))return"🎬";
+  if(/\.pdf($|\?)/.test(u))return"📄";
+  return/^https?:/.test(u)?"🌐":"🔗";
+}
+function nombreAuto(url){
+  if(/^https?:/i.test(url)){try{return new URL(url).hostname.replace(/^www\./,"")}catch(e){}}
+  return url.replace(/^[a-z]+:/i,"").replace(/^\/\//,"").slice(0,24)||"Enlace";
+}
+function enlaceHtml(l,conBorrar){
+  const web=/^https?:/i.test(l.url);
+  return`<a href="${esc(l.url)}"${web?' target="_blank" rel="noopener"':""}>${esc(iconoLink(l))} ${esc(l.n)}${conBorrar?`<button type="button" data-lkx="${l.id}" aria-label="Quitar">✕</button>`:""}</a>`;
+}
+function embedDe(url){
+  try{
+    const u=new URL(url),h=u.hostname.replace(/^www\./,"");let id="",m;
+    if(h==="youtu.be")id=u.pathname.slice(1).split("/")[0];
+    else if(h==="youtube.com"||h.endsWith(".youtube.com")){
+      if(u.pathname==="/watch")id=u.searchParams.get("v")||"";
+      else if((m=u.pathname.match(/^\/(shorts|embed|live)\/([\w-]{6,})/)))id=m[2];
+      if(!id&&u.searchParams.get("list")&&/^[\w-]+$/.test(u.searchParams.get("list")))return{tipo:"yt",src:"https://www.youtube-nocookie.com/embed/videoseries?list="+u.searchParams.get("list")};
+    }
+    if(id&&/^[\w-]{6,15}$/.test(id))return{tipo:"yt",src:"https://www.youtube-nocookie.com/embed/"+id};
+    if(h==="open.spotify.com"){
+      m=u.pathname.match(/^\/(?:intl-[a-z]+\/)?(track|album|playlist|episode|show|artist)\/([A-Za-z0-9]+)/);
+      if(m)return{tipo:"sp",alto:m[1]!=="track"&&m[1]!=="episode",src:"https://open.spotify.com/embed/"+m[1]+"/"+m[2]};
+    }
+  }catch(e){}
+  return null;
+}
+
+/* ---- Widgets propios ---- */
+function cuerpoCd(w){
+  const f=w.d.f;if(!f)return"";const d=diasEntre(hoyStr(),f),fc=esc(fCorta.format(fechaLarga(f)));
+  if(d>0)return`<div class="row"><span class="big">${d}</span><div><b>día${d===1?"":"s"}</b><p class="mu">faltan · ${fc}</p></div></div>`;
+  if(d===0)return`<div class="row"><span class="big">🎉</span><div><b>¡Es hoy!</b><p class="mu">${fc}</p></div></div>`;
+  return`<div class="row"><span class="big">${-d}</span><div><b>día${d===-1?"":"s"}</b><p class="mu">desde el ${fc}</p></div></div>`;
+}
+function cuerpoLista(w){
+  const L=E.todo.filter(t=>!t.x&&t.l===w.id).sort((a,b)=>a.h-b.h||b.id-a.id);
+  return`<div class="add"><input type="text" data-li="${w.id}" placeholder="Añadir…" maxlength="80"><button type="button" class="btn s" data-la="${w.id}" aria-label="Añadir">＋</button></div>`+
+    (L.length?L.map(t=>`<div class="t${t.h?" hecho":""}"><input type="checkbox" data-lc="${t.id}"${t.h?" checked":""}><div class="tx"><span>${esc(t.t)}</span></div><button type="button" class="ib" data-lx="${t.id}" aria-label="Borrar">✕</button></div>`).join(""):`<p class="mu">Lista vacía.</p>`);
+}
+function cuerpoHabito(w){
+  const dias=new Set(w.d.dias||[]),hoy=hoyStr();
+  let r=0,d=dias.has(hoy)?hoy:diaMenos(hoy,1);
+  while(dias.has(d)){r++;d=diaMenos(d,1)}
+  const ult=[0,1,2,3,4,5,6].map(i=>diaMenos(hoy,6-i)),hecho=dias.has(hoy);
+  return`<div class="row"><span class="big">${r}</span><div><b>día${r===1?"":"s"} de racha</b><p class="mu">${hecho?"Hoy ya lo hiciste ✓":"Hoy todavía no"}</p></div></div><div class="dots">${ult.map(x=>`<span class="${dias.has(x)?"on":""}" title="${x}">${esc(cap(fSem.format(fechaLarga(x))).slice(0,1))}</span>`).join("")}</div><button type="button" class="btn${hecho?" o":""}" data-hb="${w.id}">${hecho?"Desmarcar hoy":"Hecho hoy ✓"}</button>`;
+}
+function cuerpoLk(w){
+  const L=E.links.filter(l=>!l.x&&l.g===w.id);
+  return`<div class="links">${L.length?L.map(l=>enlaceHtml(l,edit)).join(""):`<p class="mu">Todavía no hay enlaces.</p>`}</div><div class="add" style="margin-top:10px"><input type="text" data-lkn="${w.id}" placeholder="Nombre (opcional)" maxlength="24"><input type="text" data-lku="${w.id}" placeholder="Enlace, correo o teléfono" autocapitalize="off"><button type="button" class="btn s" data-lka="${w.id}" aria-label="Añadir enlace">＋</button></div><p class="err" data-lke="${w.id}"></p>`;
+}
+function addLinkW(id){
+  const n=document.querySelector(`[data-lkn="${id}"]`),u=document.querySelector(`[data-lku="${id}"]`),er=document.querySelector(`[data-lke="${id}"]`);
+  if(!n||!u)return;er.textContent="";
+  const url=normalizaUrl(u.value);
+  if(!url){er.textContent="Esa dirección no es válida.";return}
+  E.links.push({id:newId(),n:(n.value.trim()||nombreAuto(url)).slice(0,24),url,g:id,u:Date.now()});guardar();pintaCustom();
+}
+function cuerpoVd(w){
+  const url=w.d.url,m=embedDe(url);
+  if(m)return`<iframe class="emb${m.tipo==="sp"?" sp"+(m.alto?" g":""):""}" src="${esc(m.src)}" title="${esc(w.n)}" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe><p class="mu" style="margin-top:6px"><a class="mas" href="${esc(url)}" target="_blank" rel="noopener">Abrir en su app ↗</a></p>`;
+  return`<div class="links"><a href="${esc(url)}" target="_blank" rel="noopener">🌐 ${esc(nombreAuto(url))}</a></div>`;
+}
+function cuerpoCt(w){
+  const{v,s,m}=w.d;
+  return`<div class="cnt"><button type="button" class="btn o cb" data-ctm="${w.id}" aria-label="Restar">−</button><span class="big" style="min-width:90px;text-align:center">${v}</span><button type="button" class="btn cb" data-ctp="${w.id}" aria-label="Sumar">+</button></div>`+
+    (m?`<div class="bar" style="margin-top:10px"><i style="width:${Math.min(100,Math.max(0,Math.round(v/m*100)))}%"></i></div><p class="mu" style="margin-top:4px">${v} de ${m}${v>=m?" ✓ ¡Meta lograda!":""}</p>`:"")+
+    `<p class="mu" style="margin-top:6px">Suma de ${s} en ${s} · <a href="#" class="mas" data-ctr="${w.id}">Reiniciar</a></p>`;
+}
+const tasaDe=c=>c==="usd"?1:((FXD&&FXD.usd&&FXD.usd[c])||0);
+function cuerpoFx(w){
+  if(!FXD)return`<p class="mu">Cargando tasas…</p>`;
+  const{a,b}=w.d,ra=tasaDe(a),rb=tasaDe(b),un=ra&&rb?rb/ra:0;
+  const opts=sel=>FXLIST.map(([c,n])=>`<option value="${c}"${c===sel?" selected":""}>${esc(n)}</option>`).join("");
+  return`<div class="fx"><select data-fxs="${w.id}" data-lado="a" aria-label="De">${opts(a)}</select><select data-fxs="${w.id}" data-lado="b" aria-label="A">${opts(b)}</select></div><div class="fx" style="margin-top:8px"><input type="number" inputmode="decimal" step="any" min="0" value="1" data-fxi="${w.id}" data-lado="a" aria-label="Cantidad"><input type="number" inputmode="decimal" step="any" min="0" value="${un?+un.toFixed(4):""}" data-fxi="${w.id}" data-lado="b" aria-label="Resultado"></div><p class="mu" style="margin-top:6px">1 ${esc(a.toUpperCase())} = ${un?+un.toFixed(4):"—"} ${esc(b.toUpperCase())} · dato del ${esc(FXD.f)}</p>`;
+}
+function repintaFx(){if(E.widgets.some(w=>!w.x&&w.k==="fx")&&!$("custom").contains(document.activeElement))pintaCustom()}
+const climaW={};
+function cuerpoCl(w){
+  const c=climaW[w.id];
+  if(c&&c.d)return climaCuerpo(c.d,c.ts,c.viejo);
+  if(c&&c.err)return`<p class="err">No pude cargar el clima.</p>`;
+  cargaClimaW(w);return`<p class="mu">Cargando…</p>`;
+}
+async function cargaClimaW(w){
+  if(climaW[w.id]&&climaW[w.id].cargando)return;
+  climaW[w.id]={cargando:true};
+  try{const d=await traer([urlClima(w.d.lat,w.d.lon,"auto")]);climaW[w.id]={ts:Date.now(),d};LS.set("pn-cl-"+w.id,{ts:climaW[w.id].ts,d})}
+  catch(e){const g=LS.get("pn-cl-"+w.id,null);climaW[w.id]=g?{ts:g.ts,d:g.d,viejo:true}:{err:1}}
+  if(!$("custom").contains(document.activeElement))pintaCustom();
+}
+/* Temporizador (el estado corre solo en este dispositivo) */
+const tmTodos=()=>LS.get("pn-tm",{});
+const tmGet=id=>tmTodos()[id]||{fin:0,resto:0,hecho:0};
+function tmSet(id,v){const o=tmTodos();o[id]=v;LS.set("pn-tm",o)}
+const tmTxt=ms=>{const t=Math.ceil(ms/1000);return String(Math.floor(t/60)).padStart(2,"0")+":"+String(t%60).padStart(2,"0")};
+function cuerpoTm(w){
+  const s=tmGet(w.id),corre=!!s.fin,tot=w.d.m*60000,ms=corre?Math.max(0,s.fin-Date.now()):(s.resto>0?s.resto:tot);
+  const pre=[5,10,25,45].map(m=>`<button type="button" class="btn o s" data-tmm="${w.id}" data-m="${m}">${m} min</button>`).join("");
+  const txt=s.hecho?"¡Tiempo!":tmTxt(ms),boton=corre?"⏸ Pausa":(s.resto>0&&s.resto<tot?"▶ Seguir":"▶ Iniciar");
+  return`<div class="big" data-tmd="${w.id}" style="text-align:center">${txt}</div><div class="row" style="justify-content:center;gap:6px;margin:8px 0"><button type="button" class="btn" data-tmg="${w.id}">${boton}</button><button type="button" class="btn o" data-tmr="${w.id}">↺ Reiniciar</button></div><div class="row" style="justify-content:center;gap:6px;flex-wrap:wrap">${pre}</div>`;
+}
+function tickTm(){
+  E.widgets.forEach(w=>{
+    if(w.x||w.k!=="tm")return;const s=tmGet(w.id);if(!s.fin)return;
+    const ms=s.fin-Date.now(),el=document.querySelector(`[data-tmd="${w.id}"]`);
+    if(ms<=0){tmSet(w.id,{fin:0,resto:0,hecho:1});if(el)el.textContent="¡Tiempo!";try{navigator.vibrate&&navigator.vibrate([300,120,300])}catch(e){}pintaCustom()}
+    else if(el)el.textContent=tmTxt(ms);
+  });
+}
+
+/* ---- Imágenes (se guardan en tu cuenta) ---- */
+const imgCache=new Map(),imgPend=new Set();
+const imgsDe=g=>E.imgs.filter(i=>!i.x&&i.g===g).sort((a,b)=>a.id-b.id);
+function cuerpoGal(w){
+  const L=imgsDe("w"+w.id);
+  return(L.length?`<div class="gal">${L.map(i=>`<button type="button" data-gi="${i.id}" data-go="w${w.id}" aria-label="Ver imagen"><img data-mini="${i.id}" alt="Imagen"></button>`).join("")}</div>`:`<p class="mu">Aún no hay imágenes.</p>`)+
+    `<label class="btn o s" style="margin-top:10px;display:inline-block">＋ Añadir imágenes<input type="file" accept="image/*" multiple hidden data-gu="w${w.id}"></label><p class="err" data-gerr="w${w.id}"></p>`;
+}
+async function hidrata(){
+  const poner=()=>document.querySelectorAll("img[data-mini]").forEach(im=>{const c=imgCache.get(+im.dataset.mini);if(c&&c.mini&&im.getAttribute("src")!==c.mini)im.src=c.mini});
+  poner();
+  const ids=[...new Set([...document.querySelectorAll("img[data-mini]")].map(i=>+i.dataset.mini))].filter(id=>!(imgCache.get(id)&&imgCache.get(id).mini)&&!imgPend.has(id));
+  if(!ids.length||!Cuenta.ses)return;
+  ids.forEach(id=>imgPend.add(id));
+  try{
+    for(let i=0;i<ids.length;i+=20){
+      const lote=ids.slice(i,i+20);
+      const r=await Cuenta.rest("panel_img?select=id,mini&id=in.("+lote.join(",")+")");
+      (r||[]).forEach(x=>{const c=imgCache.get(+x.id)||{};c.mini=x.mini;imgCache.set(+x.id,c)});
+    }
+  }catch(e){}
+  ids.forEach(id=>imgPend.delete(id));poner();
+}
+async function reduce(file,max,q){
+  let bmp;
+  try{bmp=await createImageBitmap(file)}
+  catch(e){bmp=await new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{URL.revokeObjectURL(u);ok(im)};im.onerror=no;im.src=u})}
+  const w=bmp.width||bmp.naturalWidth,h=bmp.height||bmp.naturalHeight,k=Math.min(1,max/Math.max(w,h));
+  const c=document.createElement("canvas");c.width=Math.max(1,Math.round(w*k));c.height=Math.max(1,Math.round(h*k));
+  const x=c.getContext("2d");x.fillStyle="#fff";x.fillRect(0,0,c.width,c.height);x.drawImage(bmp,0,0,c.width,c.height);
+  return c.toDataURL("image/jpeg",q);
+}
+async function subeImagenes(dueno,files,limite,selErr){
+  const er=document.querySelector(selErr);const msg=t=>{if(er)er.textContent=t};
+  msg("");
+  const s=Cuenta.ses;if(!s){msg("Inicia sesión para guardar imágenes.");return}
+  for(const f of files){
+    if(!/^image\//.test(f.type)){msg("Ese archivo no es una imagen.");continue}
+    if(imgsDe(dueno).length>=limite){msg("Máximo "+limite+" imágenes aquí.");break}
+    try{
+      let grande=await reduce(f,1280,.78);if(grande.length>700000)grande=await reduce(f,900,.62);
+      const mini=await reduce(f,360,.7),id=newId();
+      await Cuenta.rest("panel_img",{method:"POST",headers:{Prefer:"return=minimal"},body:JSON.stringify([{id,user_id:s.user.id,mini,grande}])});
+      imgCache.set(id,{mini,grande});E.imgs.push({id,g:dueno,u:Date.now()});guardar();
+    }catch(e){msg("No pude subir la imagen ("+String(e.message).slice(0,70)+"). ¿Ya corriste el SQL de imágenes en Supabase?")}
+  }
+  pintaCustom();pintaNotaImgs();
+}
+function borraImgRemota(id){if(Cuenta.ses)Cuenta.rest("panel_img?id=eq."+id,{method:"DELETE"}).catch(()=>{})}
+function quitaImg(id){
+  const i=E.imgs.find(x=>x.id===id);if(i){i.x=1;i.u=Date.now();guardar()}
+  borraImgRemota(id);imgCache.delete(id);pintaCustom();pintaNotaImgs();
+}
+let lb={g:"",ids:[],i:0};
+function abreLb(g,id){const ids=imgsDe(g).map(x=>x.id);lb={g,ids,i:Math.max(0,ids.indexOf(id))};$("lb").hidden=false;muestraLb()}
+async function muestraLb(){
+  const id=lb.ids[lb.i];if(id==null)return;
+  $("lbt").textContent=(lb.i+1)+" de "+lb.ids.length;
+  const c=imgCache.get(id)||{};$("lbi").src=c.grande||c.mini||"";
+  if(!c.grande){
+    try{const r=await Cuenta.rest("panel_img?select=grande&id=eq."+id);if(r&&r[0]){const cc=imgCache.get(id)||{};cc.grande=r[0].grande;imgCache.set(id,cc);if(lb.ids[lb.i]===id)$("lbi").src=cc.grande}}catch(e){}
+  }
+}
+const cierraLb=()=>{$("lb").hidden=true;$("lbi").removeAttribute("src")};
+$("lbc").addEventListener("click",cierraLb);
+$("lb").addEventListener("click",e=>{if(e.target===$("lb"))cierraLb()});
+$("lbp").addEventListener("click",()=>{if(lb.ids.length){lb.i=(lb.i-1+lb.ids.length)%lb.ids.length;muestraLb()}});
+$("lbn").addEventListener("click",()=>{if(lb.ids.length){lb.i=(lb.i+1)%lb.ids.length;muestraLb()}});
+$("lbd").addEventListener("click",()=>{
+  const id=lb.ids[lb.i];if(id==null||!confirm("¿Borrar esta imagen?"))return;
+  quitaImg(id);lb.ids.splice(lb.i,1);
+  if(!lb.ids.length)cierraLb();else{lb.i=Math.min(lb.i,lb.ids.length-1);muestraLb()}
+});
+
+/* ---- Pintar los widgets propios ---- */
+const CUERPOS={cd:cuerpoCd,ls:cuerpoLista,hb:cuerpoHabito,gl:cuerpoGal,lk:cuerpoLk,vd:cuerpoVd,ct:cuerpoCt,fx:cuerpoFx,cl:cuerpoCl,tm:cuerpoTm};
+function pintaCustom(){
+  const ws=E.widgets.filter(w=>!w.x),L=elementos();
+  $("custom").innerHTML=ws.map(w=>{
+    const ord=L.findIndex(x=>x.t==="w"&&x.k===String(w.id));
+    return`<section class="card${anchoW(w)?" full":""}${w.c?" k"+w.c:""}" data-wid="${w.id}" style="order:${ord}"><div class="hbar"${edit?"":" hidden"}>${botonesBarra("w",w.id)}<button type="button" class="btn o s" data-ac="ren" data-t="w" data-k="${w.id}" aria-label="Cambiar nombre">✎</button><button type="button" class="btn d s" data-ac="del" data-t="w" data-k="${w.id}">Eliminar</button></div><h2 style="margin:0 0 8px">${esc(w.n)}</h2>${CUERPOS[w.k](w)}</section>`;
+  }).join("");
+  hidrata();
+}
+function cambiaW(id,fn){const w=E.widgets.find(x=>x.id===id&&!x.x);if(!w)return;fn(w);w.u=Date.now();guardar();pintaCustom()}
+function addItemLista(id){
+  const i=document.querySelector(`[data-li="${id}"]`),v=i?i.value.trim():"";if(!v)return;
+  E.todo.push({id:newId(),t:v,h:0,p:0,f:"",l:id,u:Date.now()});guardar();pintaCustom();
+  const ni=document.querySelector(`[data-li="${id}"]`);if(ni)ni.focus();
+}
+$("custom").addEventListener("click",e=>{
+  const g=s=>e.target.closest(s),now=Date.now();let b;
+  if((b=g("[data-la]")))addItemLista(+b.dataset.la);
+  else if((b=g("[data-lc]"))){const t=E.todo.find(x=>x.id===+b.dataset.lc);if(t){t.h=b.checked?1:0;t.u=now;guardar();pintaCustom()}}
+  else if((b=g("[data-lx]"))){const t=E.todo.find(x=>x.id===+b.dataset.lx);if(t){t.x=1;t.u=now;t.t="";guardar();pintaCustom()}}
+  else if((b=g("[data-hb]"))){
+    const hoy=hoyStr();cambiaW(+b.dataset.hb,w=>{const s=new Set(w.d.dias||[]);s.has(hoy)?s.delete(hoy):s.add(hoy);w.d={dias:[...s].sort()}});
+  }
+  else if((b=g("[data-lka]")))addLinkW(+b.dataset.lka);
+  else if((b=g("[data-lkx]"))){e.preventDefault();const l=E.links.find(x=>x.id===+b.dataset.lkx);if(l){l.x=1;l.u=now;l.n="";l.url="";guardar();pintaCustom()}}
+  else if((b=g("[data-ctp]")))cambiaW(+b.dataset.ctp,w=>{w.d.v=(w.d.v||0)+(w.d.s||1)});
+  else if((b=g("[data-ctm]")))cambiaW(+b.dataset.ctm,w=>{w.d.v=Math.max(0,(w.d.v||0)-(w.d.s||1))});
+  else if((b=g("[data-ctr]"))){e.preventDefault();cambiaW(+b.dataset.ctr,w=>{w.d.v=0})}
+  else if((b=g("[data-gi]")))abreLb(b.dataset.go,+b.dataset.gi);
+  else if((b=g("[data-tmg]"))){
+    const id=+b.dataset.tmg,w=E.widgets.find(x=>x.id===id),s=tmGet(id);if(!w)return;
+    if(s.fin)tmSet(id,{fin:0,resto:Math.max(0,s.fin-now),hecho:0});
+    else tmSet(id,{fin:now+(s.resto>0?s.resto:w.d.m*60000),resto:0,hecho:0});
+    pintaCustom();
+  }
+  else if((b=g("[data-tmr]"))){tmSet(+b.dataset.tmr,{fin:0,resto:0,hecho:0});pintaCustom()}
+  else if((b=g("[data-tmm]"))){const id=+b.dataset.tmm;tmSet(id,{fin:0,resto:0,hecho:0});cambiaW(id,w=>{w.d.m=+b.dataset.m})}
+});
+$("custom").addEventListener("keydown",e=>{
+  if(e.key!=="Enter")return;
+  const i=e.target.closest("[data-li]");if(i){addItemLista(+i.dataset.li);return}
+  const l=e.target.closest("[data-lkn],[data-lku]");if(l)addLinkW(+(l.dataset.lkn||l.dataset.lku));
+});
+$("custom").addEventListener("change",e=>{
+  const s=e.target.closest("[data-fxs]");
+  if(s){cambiaW(+s.dataset.fxs,w=>{w.d[s.dataset.lado]=s.value});return}
+  const f=e.target.closest("[data-gu]");
+  if(f&&f.files.length){const dueno=f.dataset.gu,fs=[...f.files];f.value="";subeImagenes(dueno,fs,30,`[data-gerr="${dueno}"]`)}
+});
+$("custom").addEventListener("input",e=>{
+  const i=e.target.closest("[data-fxi]");if(!i)return;
+  const w=E.widgets.find(x=>x.id===+i.dataset.fxi);if(!w)return;
+  const v=parseFloat(i.value),ra=tasaDe(w.d.a),rb=tasaDe(w.d.b),lado=i.dataset.lado==="a"?"b":"a";
+  const otro=document.querySelector(`[data-fxi="${w.id}"][data-lado="${lado}"]`);if(!otro)return;
+  otro.value=isNaN(v)||!ra||!rb?"":+((i.dataset.lado==="a"?v*rb/ra:v*ra/rb).toFixed(4));
+});
+
+/* ---- Accesos rápidos ---- */
+let editando=false;
+function accesos(){
+  const p=E.links.filter(l=>!l.x&&!l.g);
+  $("lk").innerHTML=ACCESOS.map(a=>`<a href="${esc(a.u)}"${/^https?:/.test(a.u)?' target="_blank" rel="noopener"':""}>${a.e?esc(a.e)+" ":""}${esc(a.n)}</a>`).join("")+p.map(a=>enlaceHtml(a,editando)).join("");
+  $("lform").hidden=!editando;$("edl").textContent=editando?"Listo":"Editar";
+}
+$("edl").addEventListener("click",()=>{editando=!editando;accesos()});
+$("la").addEventListener("click",()=>{
+  const n=$("ln").value.trim(),u=normalizaUrl($("lu").value),er=$("lerr");er.textContent="";
+  if(!u){er.textContent="Esa dirección no es válida.";return}
+  E.links.push({id:newId(),n:(n||nombreAuto(u)).slice(0,24),url:u,u:Date.now()});guardar();$("ln").value="";$("lu").value="";accesos();
+});
+$("lk").addEventListener("click",e=>{
+  const b=e.target.closest("[data-lkx]");if(!b)return;
+  e.preventDefault();const l=E.links.find(x=>x.id===+b.dataset.lkx);if(l){l.x=1;l.u=Date.now();l.n="";l.url=""}guardar();accesos();
+});
+
+/* ---- Pendientes ---- */
+const PRIO=[["Normal","⚪"],["Media","🟡"],["Alta","🔴"]];
+let tfil="todos",editT=0;
+function badgeFecha(f){
+  if(!f)return"";
+  const d=diasEntre(hoyStr(),f);let t,c="";
+  if(d<0){t="Vencido · "+fCorta.format(fechaLarga(f));c="neg"}
+  else if(d===0){t="Hoy";c="hoy"}
+  else if(d===1){t="Mañana";c="hoy"}
+  else if(d<7)t=cap(fSem.format(fechaLarga(f)));
+  else t=fCorta.format(fechaLarga(f));
+  return`<span class="bd ${c}">📅 ${esc(t)}</span>`;
+}
+const ordenaT=(a,b)=>a.h-b.h||b.p-a.p||((a.f||"9")<(b.f||"9")?-1:(a.f||"9")>(b.f||"9")?1:0)||b.id-a.id;
+function filaTodo(t){
+  const pr=t.p?`<span class="bd">${PRIO[t.p][1]} ${PRIO[t.p][0]}</span>`:"";
+  return`<div class="t${t.h?" hecho":""}"><input type="checkbox" data-id="${t.id}"${t.h?" checked":""}><div class="tx"><span>${esc(t.t)}</span><div class="meta">${pr}${t.h?"":badgeFecha(t.f)}</div></div><button type="button" class="ib" data-ed="${t.id}" aria-label="Editar">✎</button><button type="button" class="ib" data-x="${t.id}" aria-label="Borrar">✕</button></div>`;
+}
+function filaEditar(t){
+  return`<div class="t ed" data-eid="${t.id}"><div class="tx"><input type="text" class="et" value="${esc(t.t)}" maxlength="120" style="margin-bottom:6px"><div class="l2"><select class="ep">${PRIO.map((p,i)=>`<option value="${i}"${t.p===i?" selected":""}>${p[1]} ${p[0]}</option>`).join("")}</select><input type="date" class="ef" value="${esc(t.f)}"></div><div class="l2"><button type="button" class="btn s" data-ok="${t.id}">Guardar</button><button type="button" class="btn o s" data-no="1">Cancelar</button></div></div></div>`;
+}
+function pintaTodo(){
+  const todos=E.todo.filter(t=>!t.x&&!t.l),hoy=hoyStr();
+  const n={todos:todos.length,hoy:todos.filter(t=>!t.h&&t.f&&t.f<=hoy).length,pend:todos.filter(t=>!t.h).length,hechos:todos.filter(t=>t.h).length};
+  $("tfl").innerHTML=[["todos","Todos"],["hoy","Hoy"],["pend","Pendientes"],["hechos","Hechos"]].map(([k,t])=>`<button type="button" data-tf="${k}" class="${tfil===k?"on":""}">${t} <small>${n[k]}</small></button>`).join("");
+  const L=todos.filter(t=>tfil==="todos"||(tfil==="hoy"&&!t.h&&t.f&&t.f<=hoy)||(tfil==="pend"&&!t.h)||(tfil==="hechos"&&t.h)).sort(ordenaT);
+  const pc=n.todos?Math.round(n.hechos/n.todos*100):0;
+  $("tbar").innerHTML=n.todos?`<div class="bar"><i style="width:${pc}%"></i></div><p class="mu" style="margin:4px 0 8px">${n.hechos} de ${n.todos} hechos${pc===100?" 🎉":""}</p>`:"";
+  $("tl").innerHTML=L.length?L.map(t=>t.id===editT?filaEditar(t):filaTodo(t)).join(""):`<p class="mu">${n.todos?"Nada en esta vista.":"Nada pendiente. 🎉"}</p>`;
+  $("tb").hidden=!n.hechos;
+}
+function addTodo(){
+  const v=$("ti").value.trim();if(!v)return;
+  const f=$("tf").value;
+  E.todo.push({id:newId(),t:v,h:0,p:+$("tp").value||0,f:FECHA_OK.test(f)?f:"",l:0,u:Date.now()});
+  guardar();$("ti").value="";$("tp").value="0";$("tf").value="";pintaTodo();$("ti").focus();
+}
+function guardaEdicion(id){
+  const fila=document.querySelector(`[data-eid="${id}"]`),t=E.todo.find(x=>x.id===id);
+  if(fila&&t){const v=fila.querySelector(".et").value.trim();if(v)t.t=v;t.p=+fila.querySelector(".ep").value||0;const f=fila.querySelector(".ef").value;t.f=FECHA_OK.test(f)?f:"";t.u=Date.now();guardar()}
+  editT=0;pintaTodo();
+}
+$("ta").addEventListener("click",addTodo);
+$("ti").addEventListener("keydown",e=>{if(e.key==="Enter")addTodo()});
+$("tfl").addEventListener("click",e=>{const b=e.target.closest("[data-tf]");if(b){tfil=b.dataset.tf;pintaTodo()}});
+$("tl").addEventListener("click",e=>{
+  const g=s=>e.target.closest(s);let b;
+  if((b=g("input[data-id]"))){const t=E.todo.find(t=>t.id===+b.dataset.id);if(t){t.h=b.checked?1:0;t.u=Date.now();guardar();pintaTodo()}}
+  else if((b=g("[data-x]"))){const t=E.todo.find(t=>t.id===+b.dataset.x);if(t){t.x=1;t.u=Date.now();t.t="";if(editT===t.id)editT=0;guardar();pintaTodo()}}
+  else if((b=g("[data-ed]"))){editT=+b.dataset.ed;pintaTodo();const i=document.querySelector(".t.ed .et");if(i){i.focus();i.setSelectionRange(i.value.length,i.value.length)}}
+  else if((b=g("[data-ok]")))guardaEdicion(+b.dataset.ok);
+  else if(g("[data-no]")){editT=0;pintaTodo()}
+});
+$("tl").addEventListener("keydown",e=>{
+  const f=e.target.closest(".t.ed");if(!f)return;
+  if(e.key==="Enter"&&e.target.classList.contains("et"))guardaEdicion(+f.dataset.eid);
+  if(e.key==="Escape"){editT=0;pintaTodo()}
+});
+$("tb").addEventListener("click",()=>{const u=Date.now();E.todo.forEach(t=>{if(t.h&&!t.x&&!t.l){t.x=1;t.u=u;t.t=""}});guardar();pintaTodo()});
+
+/* ---- Notas ---- */
+let notaAbierta=0,nq="",nTm;
+function pintaNotas(){
+  const q=nq.trim().toLowerCase();
+  const L=E.notas.filter(n=>!n.x&&(!q||(n.ti+" "+n.t).toLowerCase().includes(q))).sort((a,b)=>b.pin-a.pin||b.u-a.u);
+  $("nl").innerHTML=L.length?L.map(n=>{
+    const ti=n.ti.trim()||n.t.trim().split("\n")[0].slice(0,40)||"Sin título",ni=imgsDe("n"+n.id).length;
+    return`<button type="button" class="nc c${n.c}" data-n="${n.id}"><b>${n.pin?"📌 ":""}${esc(ti)}</b>${n.ti.trim()&&n.t.trim()?`<span>${esc(n.t.slice(0,160))}</span>`:""}<small>${esc(fCorta.format(new Date(n.u)))}${ni?" · 🖼️ "+ni:""}</small></button>`;
+  }).join(""):`<p class="mu" style="grid-column:1/-1">${E.notas.some(n=>!n.x)?"No encontré notas con eso.":"Todavía no tienes notas. Toca «＋ Nueva»."}</p>`;
+}
+function pintaSw(n){
+  $("nsw").innerHTML=[0,1,2,3,4,5].map(i=>`<button type="button" class="sw c${i}${n.c===i?" on":""}" data-nc="${i}" aria-label="Color ${i}"></button>`).join("");
+  $("npn").textContent=n.pin?"📌 Fijada":"📌 Fijar";
+}
+function pintaNotaImgs(){
+  if(!notaAbierta){$("nim").innerHTML="";return}
+  const L=imgsDe("n"+notaAbierta);
+  $("nim").innerHTML=L.map(i=>`<button type="button" data-gi="${i.id}" data-go="n${notaAbierta}" aria-label="Ver imagen"><img data-mini="${i.id}" alt="Imagen"></button>`).join("");
+  $("nim").hidden=!L.length;hidrata();
+}
+const notaActual=()=>E.notas.find(x=>x.id===notaAbierta&&!x.x);
+function abreNota(id){
+  const n=E.notas.find(x=>x.id===id&&!x.x);if(!n)return;
+  notaAbierta=id;$("nti").value=n.ti;$("ntx").value=n.t;$("nier").textContent="";pintaSw(n);pintaNotaImgs();$("nm").hidden=false;document.body.style.overflow="hidden";
+}
+function guardaNotaYa(){
+  const n=notaActual();if(!n)return;
+  if(n.ti!==$("nti").value||n.t!==$("ntx").value){n.ti=$("nti").value;n.t=$("ntx").value;n.u=Date.now();guardar()}
+}
+function tiraNota(n){
+  const ahora=Date.now();n.x=1;n.u=ahora;n.ti="";n.t="";
+  E.imgs.forEach(i=>{if(i.g==="n"+n.id&&!i.x){i.x=1;i.u=ahora;borraImgRemota(i.id)}});
+  guardar();
+}
+function cierraNota(){
+  clearTimeout(nTm);const n=notaActual();
+  if(n){guardaNotaYa();if(!n.ti.trim()&&!n.t.trim()&&!imgsDe("n"+n.id).length)tiraNota(n)}
+  notaAbierta=0;$("nm").hidden=true;document.body.style.overflow="";pintaNotas();
+}
+$("nn").addEventListener("click",()=>{const id=newId();E.notas.push({id,ti:"",t:"",c:0,pin:0,u:Date.now()});guardar();abreNota(id);$("nti").focus()});
+$("nl").addEventListener("click",e=>{const b=e.target.closest("[data-n]");if(b)abreNota(+b.dataset.n)});
+$("nq").addEventListener("input",()=>{nq=$("nq").value;pintaNotas()});
+const difiere=()=>{clearTimeout(nTm);nTm=setTimeout(()=>{guardaNotaYa();pintaNotas()},350)};
+$("nti").addEventListener("input",difiere);$("ntx").addEventListener("input",difiere);
+$("nsw").addEventListener("click",e=>{const b=e.target.closest("[data-nc]"),n=notaActual();if(!b||!n)return;n.c=+b.dataset.nc;n.u=Date.now();guardar();pintaSw(n);pintaNotas()});
+$("npn").addEventListener("click",()=>{const n=notaActual();if(!n)return;n.pin=n.pin?0:1;n.u=Date.now();guardar();pintaSw(n);pintaNotas()});
+$("nde").addEventListener("click",()=>{
+  const n=notaActual();if(!n)return;
+  if(!confirm("¿Borrar esta nota?"))return;
+  tiraNota(n);notaAbierta=0;$("nm").hidden=true;document.body.style.overflow="";pintaNotas();
+});
+$("nok").addEventListener("click",cierraNota);
+$("nm").addEventListener("click",e=>{if(e.target===$("nm"))cierraNota()});
+$("nim").addEventListener("click",e=>{const b=e.target.closest("[data-gi]");if(b)abreLb(b.dataset.go,+b.dataset.gi)});
+$("nfi").addEventListener("change",()=>{
+  const f=[...$("nfi").files];$("nfi").value="";
+  if(f.length&&notaAbierta){guardaNotaYa();subeImagenes("n"+notaAbierta,f,4,"#nier")}
+});
+document.addEventListener("keydown",e=>{
+  if(e.key!=="Escape")return;
+  if(!$("lb").hidden)cierraLb();else if(!$("nm").hidden)cierraNota();
+});
+
+/* ---- Arranque ---- */
+function llenaMonedas(){const o=FXLIST.map(([c,n])=>`<option value="${c}">${esc(n)}</option>`).join("");$("fxa").innerHTML=o;$("fxb").innerHTML=o;$("fxa").value="usd";$("fxb").value="hnl"}
+llenaMonedas();ajustaForm();
+{const a=LS.get("pn-fxall",null);if(a)FXD={usd:a.usd,f:a.f}}
+cabecera();setInterval(cabecera,30000);
+pintaCuenta();iniciaHbars();aplicaVista();pintaTray();accesos();pintaTodo();pintaCustom();pintaNotas();parley();clima();cambio();
+if(SES()){if(!SES().nombre)Cuenta.cargaPerfil().then(()=>{pintaCuenta();cabecera()});sincronizar()}
+setInterval(tickTm,1000);
+setInterval(()=>{if(SES()&&!document.hidden)sincronizar()},60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){cabecera();sincronizar()}});
+window.addEventListener("online",sincronizar);
+</script>
+</body>
+</html>
